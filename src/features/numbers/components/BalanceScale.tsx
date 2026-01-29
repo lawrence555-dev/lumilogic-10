@@ -112,7 +112,6 @@ export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalance
                     <TrayVisual color={WOOD_COLOR} />
                 </group>
 
-                {/* Pivot Point Indicator (Glows on Success) */}
                 <mesh position={[0, 0, 0.3]}>
                     <circleGeometry args={[0.3, 32]} />
                     <meshStandardMaterial
@@ -123,8 +122,20 @@ export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalance
                     />
                 </mesh>
             </group>
+
+            {/* Tilt Limiters (Invisible) */}
+            <Stoppers />
         </group>
     );
+}
+
+function Stoppers() {
+    // Left Stopper
+    useBox(() => ({ mass: 0, position: [-3, -1.5, 0], args: [0.5, 2, 0.5] }));
+    // Right Stopper
+    useBox(() => ({ mass: 0, position: [3, -1.5, 0], args: [0.5, 2, 0.5] }));
+
+    return null; // Invisible physics bodies
 }
 
 function TrayVisual({ color }: { color: THREE.Color }) {
