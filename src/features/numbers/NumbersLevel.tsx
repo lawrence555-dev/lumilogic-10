@@ -91,11 +91,12 @@ export default function NumbersLevel() {
 
                         {/* 2. User Supply (Bottom Area) */}
                         {/* A row of pinecones ready to pick */}
-                        <Pinecone position={[-2, -3, 2]} />
-                        <Pinecone position={[-1, -3, 2]} />
-                        <Pinecone position={[0, -3, 2]} />
-                        <Pinecone position={[1, -3, 2]} />
-                        <Pinecone position={[2, -3, 2]} />
+                        <Pinecone position={[-2.5, -1.8, 3]} />
+                        <Pinecone position={[-1.5, -1.8, 3]} />
+                        <Pinecone position={[-0.5, -1.8, 3]} />
+                        <Pinecone position={[0.5, -1.8, 3]} />
+                        <Pinecone position={[1.5, -1.8, 3]} />
+                        <Pinecone position={[2.5, -1.8, 3]} />
 
                         {/* Extra */}
                         <Pinecone position={[3, -3, 2]} />
