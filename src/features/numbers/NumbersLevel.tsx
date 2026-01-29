@@ -1,8 +1,8 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Physics } from "@react-three/cannon";
-import { Environment, OrbitControls } from "@react-three/drei";
+import { Physics, useBox } from "@react-three/cannon";
+import { Environment, OrbitControls, RoundedBox } from "@react-three/drei";
 import { Suspense, useState, useEffect } from "react";
 import { House, IdentificationCard } from "@phosphor-icons/react";
 import Link from "next/link";
@@ -90,6 +90,7 @@ export default function NumbersLevel() {
                         <Pinecone position={[-3.8, 4.8, 0]} />
 
                         {/* 2. User Supply (Bottom Area) */}
+                        <SupplyShelf position={[0, -2.5, 3]} />
                         {/* A row of pinecones ready to pick */}
                         <Pinecone position={[-2.5, -1.8, 3]} />
                         <Pinecone position={[-1.5, -1.8, 3]} />
@@ -114,5 +115,21 @@ export default function NumbersLevel() {
                 />
             </Canvas>
         </div>
+    );
+}
+
+function SupplyShelf({ position }: { position: [number, number, number] }) {
+    const [ref] = useBox(() => ({
+        mass: 0,
+        position,
+        args: [8, 0.5, 2], // Large shelf
+    }));
+
+    return (
+        <mesh ref={ref as any}>
+            <RoundedBox args={[8, 0.5, 2]} radius={0.1} smoothness={4}>
+                <meshStandardMaterial color="#8D6E63" transparent opacity={0.8} />
+            </RoundedBox>
+        </mesh>
     );
 }
