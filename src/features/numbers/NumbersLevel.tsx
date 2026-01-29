@@ -42,7 +42,7 @@ export default function NumbersLevel() {
     };
 
     return (
-        <div className="w-full h-full relative bg-neutral-100 rounded-3xl overflow-hidden shadow-inner flex items-center justify-center">
+        <div className="w-full h-full relative overflow-hidden flex items-center justify-center">
             {/* --- UI LAYER --- */}
             {/* Top Bar */}
             <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10 pointer-events-none">
@@ -64,7 +64,7 @@ export default function NumbersLevel() {
             <StampOverlay isVisible={showSuccess} onComplete={handleStampComplete} />
 
             {/* --- 3D SCENE --- */}
-            <Canvas camera={{ position: [0, 2, 14], fov: 40 }} shadows>
+            <Canvas camera={{ position: [0, 0.5, 11], fov: 40 }} shadows>
                 {/* Lighting */}
                 <ambientLight intensity={0.5} />
                 <spotLight position={[10, 10, 10]} angle={0.5} penumbra={1} intensity={1} castShadow />
@@ -109,7 +109,7 @@ export default function NumbersLevel() {
                     enableZoom={false}
                     enablePan={false}
                     maxPolarAngle={Math.PI / 2 - 0.1}
-                    minPolarAngle={Math.PI / 3}
+                    minPolarAngle={Math.PI / 4}
                 />
             </Canvas>
         </div>
