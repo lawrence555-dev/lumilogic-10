@@ -2,6 +2,7 @@
 
 import { Cube, Scales, PuzzlePiece, Shapes, GitBranch } from "@phosphor-icons/react";
 import ModuleIcon from "@/components/navigation/ModuleIcon";
+import { useRouter } from "next/navigation";
 
 interface WorldMapProps {
     onNavigate: (view: "map" | "spatial") => void;
@@ -17,6 +18,7 @@ const MODULES = [
 ];
 
 export default function WorldMap({ onNavigate, completedModules }: WorldMapProps) {
+    const router = useRouter();
     const activeIndex = completedModules.length; // 0 if none, 1 if Spatial done, etc.
 
     return (

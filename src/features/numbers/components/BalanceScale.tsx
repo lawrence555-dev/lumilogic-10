@@ -1,15 +1,16 @@
 "use client";
 
 import { useCompoundBody, useBox, useCylinder, useHingeConstraint } from "@react-three/cannon";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 
 // MATERIALS
 const WOOD_COLOR = new THREE.Color("#E0C097");
 const SAGE_COLOR = new THREE.Color("#A5D6A7");
 
-export function BalanceScale() {
+export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalanced: boolean) => void }) {
     // 1. BASE (Static)
     // A vertical post standing on the ground
     const [baseRef] = useCylinder(() => ({
@@ -20,7 +21,7 @@ export function BalanceScale() {
 
     // 2. BEAM (Dynamic - Compound Body)
     // Central beam + 2 Trays (Cups)
-    const [beamRef] = useCompoundBody(() => ({
+    const [beamRef, api] = useCompoundBody(() => ({
         mass: 5, // Heavy enough to be stable
         position: [0, 0.5, 0], // Top of base
         shapes: [
@@ -46,6 +47,30 @@ export function BalanceScale() {
         linearDamping: 0.5,
         angularDamping: 0.5, // Slow down swinging
     }));
+
+    // Track Rotation
+    const rotation = useRef([0, 0, 0]);
+    // Effect to subscribe
+    // Note: useCompoundBody API subscription
+    // We need to use `api.rotation.subscribe` safely
+    // Since we are inside the component loop, we should use useEffect
+    useEffect(() => {
+        const unsubscribe = api.rotation.subscribe((v) => (rotation.current = v));
+        return unsubscribe;
+    }, [api.rotation]);
+
+    const [isLevel, setIsLevel] = useState(false);
+
+    useFrame(() => {
+        // Z-axis rotation (Tilt)
+        const tilt = rotation.current[2];
+        const balanced = Math.abs(tilt) < 0.05; // ~3 degrees tolerance
+
+        if (balanced !== isLevel) {
+            setIsLevel(balanced);
+            onBalanceChange?.(balanced);
+        }
+    });
 
     // 3. HINGE CONSTRAINT (Connect Beam Center to Base Top)
     useHingeConstraint(baseRef, beamRef, {
@@ -90,7 +115,12 @@ export function BalanceScale() {
                 {/* Pivot Point Indicator (Glows on Success) */}
                 <mesh position={[0, 0, 0.3]}>
                     <circleGeometry args={[0.3, 32]} />
-                    <meshStandardMaterial color={SAGE_COLOR} emissive={SAGE_COLOR} emissiveIntensity={0.5} />
+                    <meshStandardMaterial
+                        color={SAGE_COLOR}
+                        emissive={SAGE_COLOR}
+                        emissiveIntensity={isLevel ? 2 : 0}
+                        toneMapped={false}
+                    />
                 </mesh>
             </group>
         </group>
