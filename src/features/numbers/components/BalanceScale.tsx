@@ -1,0 +1,120 @@
+"use client";
+
+import { useCompoundBody, useBox, useCylinder, useHingeConstraint } from "@react-three/cannon";
+import { useRef } from "react";
+import { RoundedBox } from "@react-three/drei";
+import * as THREE from "three";
+
+// MATERIALS
+const WOOD_COLOR = new THREE.Color("#E0C097");
+const SAGE_COLOR = new THREE.Color("#A5D6A7");
+
+export function BalanceScale() {
+    // 1. BASE (Static)
+    // A vertical post standing on the ground
+    const [baseRef] = useCylinder(() => ({
+        mass: 0, // Static
+        position: [0, -2, 0],
+        args: [0.5, 0.8, 4, 16], // [radiusTop, radiusBottom, height, segments]
+    }));
+
+    // 2. BEAM (Dynamic - Compound Body)
+    // Central beam + 2 Trays (Cups)
+    const [beamRef] = useCompoundBody(() => ({
+        mass: 5, // Heavy enough to be stable
+        position: [0, 0.5, 0], // Top of base
+        shapes: [
+            // Main Beam
+            { type: "Box", args: [8, 0.2, 0.5], position: [0, 0, 0] },
+
+            // Left Tray (Cup Base)
+            { type: "Box", args: [1.5, 0.2, 1.5], position: [-4, 0.5, 0] },
+            // Left Tray Walls (to catch pinecones)
+            { type: "Box", args: [0.1, 1, 1.5], position: [-4.7, 1, 0] }, // Outer
+            { type: "Box", args: [0.1, 1, 1.5], position: [-3.3, 1, 0] }, // Inner
+            { type: "Box", args: [1.3, 1, 0.1], position: [-4, 1, 0.7] }, // Front
+            { type: "Box", args: [1.3, 1, 0.1], position: [-4, 1, -0.7] }, // Back
+
+            // Right Tray (Cup Base)
+            { type: "Box", args: [1.5, 0.2, 1.5], position: [4, 0.5, 0] },
+            // Right Tray Walls
+            { type: "Box", args: [0.1, 1, 1.5], position: [4.7, 1, 0] }, // Outer
+            { type: "Box", args: [0.1, 1, 1.5], position: [3.3, 1, 0] }, // Inner
+            { type: "Box", args: [1.3, 1, 0.1], position: [4, 1, 0.7] }, // Front
+            { type: "Box", args: [1.3, 1, 0.1], position: [4, 1, -0.7] }, // Back
+        ],
+        linearDamping: 0.5,
+        angularDamping: 0.5, // Slow down swinging
+    }));
+
+    // 3. HINGE CONSTRAINT (Connect Beam Center to Base Top)
+    useHingeConstraint(baseRef, beamRef, {
+        pivotA: [0, 2, 0], // Top of base cylinder (height 4, center at -2 -> top is at 0)
+        pivotB: [0, 0, 0], // Center of beam
+        axisA: [0, 0, 1], // Rotate around Z axis (Tilt Left/Right)
+        axisB: [0, 0, 1],
+    });
+
+    return (
+        <group>
+            {/* Visual Mesh for Base */}
+            <mesh ref={baseRef as any}>
+                <cylinderGeometry args={[0.5, 0.8, 4, 32]} />
+                <meshStandardMaterial color="#8D6E63" />
+            </mesh>
+
+            {/* Visual Mesh for Beam & Trays */}
+            {/* Note: This MUST match the physics shapes manually or iterate. 
+                For simplicity in Kid's App, constructing a group that follows the physics body. */}
+            <group ref={beamRef as any}>
+                {/* Main Beam */}
+                <RoundedBox args={[8, 0.2, 0.5]} radius={0.05} smoothness={4}>
+                    <meshPhysicalMaterial
+                        color={WOOD_COLOR}
+                        clearcoat={1}
+                        clearcoatRoughness={0.1}
+                        roughness={0.2}
+                    />
+                </RoundedBox>
+
+                {/* Left Tray Visual */}
+                <group position={[-4, 0.5, 0]}>
+                    <TrayVisual color={WOOD_COLOR} />
+                </group>
+
+                {/* Right Tray Visual */}
+                <group position={[4, 0.5, 0]}>
+                    <TrayVisual color={WOOD_COLOR} />
+                </group>
+
+                {/* Pivot Point Indicator (Glows on Success) */}
+                <mesh position={[0, 0, 0.3]}>
+                    <circleGeometry args={[0.3, 32]} />
+                    <meshStandardMaterial color={SAGE_COLOR} emissive={SAGE_COLOR} emissiveIntensity={0.5} />
+                </mesh>
+            </group>
+        </group>
+    );
+}
+
+function TrayVisual({ color }: { color: THREE.Color }) {
+    const materialProps = {
+        color,
+        clearcoat: 1,
+        roughness: 0.2
+    };
+
+    return (
+        <group>
+            {/* Base */}
+            <RoundedBox args={[1.5, 0.2, 1.5]} radius={0.05} smoothness={4}>
+                <meshPhysicalMaterial {...materialProps} />
+            </RoundedBox>
+            {/* Walls */}
+            <RoundedBox args={[0.1, 1, 1.5]} position={[-0.7, 0.5, 0]} radius={0.02}><meshPhysicalMaterial {...materialProps} /></RoundedBox>
+            <RoundedBox args={[0.1, 1, 1.5]} position={[0.7, 0.5, 0]} radius={0.02}><meshPhysicalMaterial {...materialProps} /></RoundedBox>
+            <RoundedBox args={[1.3, 1, 0.1]} position={[0, 0.5, 0.7]} radius={0.02}><meshPhysicalMaterial {...materialProps} /></RoundedBox>
+            <RoundedBox args={[1.3, 1, 0.1]} position={[0, 0.5, -0.7]} radius={0.02}><meshPhysicalMaterial {...materialProps} /></RoundedBox>
+        </group>
+    );
+}
