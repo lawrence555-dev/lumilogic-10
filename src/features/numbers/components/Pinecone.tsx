@@ -36,10 +36,20 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
             api.wakeUp();
         } else if (last) {
             // Released: Snap to Z=0 (Inside the tray depth)
-            api.position.set(x, y, 0);
+
+            // SMART ASSIST: Magnetic Snap to Basket Centers
+            // If user is roughly over the Right Tray (X=4)
+            let finalX = x;
+            if (x > 2.5 && x < 5.5) finalX = 4;
+            // If user is roughly over the Left Tray (X=-4)
+            if (x > -5.5 && x < -2.5) finalX = -4;
+
+            api.position.set(finalX, y, 0);
             api.velocity.set(0, 0, 0);
             api.angularVelocity.set(0, 0, 0);
             api.wakeUp(); // Let gravity take over
+
+            if (last) onDragChange?.(false);
         }
     });
 
