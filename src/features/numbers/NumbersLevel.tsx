@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { Physics, useBox } from "@react-three/cannon";
 import { Environment, OrbitControls, RoundedBox } from "@react-three/drei";
 import { Suspense, useState, useEffect } from "react";
-import { House, IdentificationCard } from "@phosphor-icons/react";
+import { House, IdentificationCard, ArrowsClockwise } from "@phosphor-icons/react";
 import Link from "next/link";
 import clsx from "clsx";
 
@@ -16,6 +16,7 @@ export default function NumbersLevel() {
     const [isBalanced, setIsBalanced] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [resetKey, setResetKey] = useState(0);
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
     // WIN LOGIC: 1.5s Hold
@@ -53,8 +54,15 @@ export default function NumbersLevel() {
                     <span className="text-lumi-sage font-medium opacity-80">The Forest Balance</span>
                 </div>
 
-                {/* Nav Buttons (Pointer Events Re-enabled) */}
                 <div className="flex gap-4 pointer-events-auto">
+                    <button
+                        onClick={() => setResetKey(k => k + 1)}
+                        className="p-3 bg-white rounded-full shadow-sm hover:scale-105 transition-transform text-lumi-wood flex items-center justify-center"
+                        title="Restart Level"
+                    >
+                        <ArrowsClockwise weight="duotone" className="w-8 h-8" />
+                    </button>
+
                     <Link href="/" className="p-3 bg-white rounded-full shadow-sm hover:scale-105 transition-transform text-lumi-wood">
                         <House weight="duotone" className="w-8 h-8" />
                     </Link>
@@ -73,7 +81,7 @@ export default function NumbersLevel() {
 
                 {/* Physics World */}
                 <Suspense fallback={null}>
-                    <Physics gravity={[0, -9.81, 0]} defaultContactMaterial={{ friction: 0.1, restitution: 0.1 }}>
+                    <Physics key={resetKey} gravity={[0, -9.81, 0]} defaultContactMaterial={{ friction: 0.1, restitution: 0.1 }}>
 
                         {/* Ground Plane (Invisible catcher) */}
                         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, 0]}>

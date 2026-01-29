@@ -29,8 +29,8 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
         const y = -(screenY / size.height) * viewport.height + viewport.height / 2;
 
         if (active) {
-            // Dragging: Move smoothly at Z=2 (In front of collision)
-            api.position.set(x, y, 2);
+            // Dragging: Move smoothly at Z=5 (Very close to camera for visibility)
+            api.position.set(x, y, 5);
             api.velocity.set(0, 0, 0);
             api.angularVelocity.set(0, 0, 0);
             api.wakeUp();
