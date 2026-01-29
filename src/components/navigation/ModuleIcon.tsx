@@ -12,6 +12,7 @@ interface ModuleIconProps {
     isCompleted?: boolean;
     isActive?: boolean;
     onClick?: () => void;
+    as?: "button" | "div";
 }
 
 export default function ModuleIcon({
@@ -22,18 +23,20 @@ export default function ModuleIcon({
     isCompleted = false,
     isActive = false,
     onClick,
+    as = "button",
 }: ModuleIconProps) {
     // Organic "Pebble" border radius
     const pebbleShape = isLocked ? "rounded-2xl" : "rounded-[30%_70%_70%_30%/30%_30%_70%_70%]";
+    const Component = as === "div" ? motion.div : motion.button;
 
     return (
-        <motion.button
+        <Component
             whileHover={!isLocked ? { scale: 1.05 } : {}}
             whileTap={!isLocked ? { scale: 0.95 } : {}}
             animate={isActive ? { y: [-4, 4, -4] } : {}}
             transition={isActive ? { repeat: Infinity, duration: 4, ease: "easeInOut" } : {}}
             onClick={!isLocked ? onClick : undefined}
-            disabled={isLocked}
+            disabled={isLocked && as === "button" ? true : undefined}
             className="group relative flex flex-col items-center justify-center focus:outline-none"
         >
             <div
@@ -81,6 +84,6 @@ export default function ModuleIcon({
             >
                 {label}
             </span>
-        </motion.button>
+        </Component>
     );
 }

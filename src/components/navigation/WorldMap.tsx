@@ -2,6 +2,7 @@
 
 import { Cube, Scales, PuzzlePiece, Shapes, GitBranch } from "@phosphor-icons/react";
 import ModuleIcon from "@/components/navigation/ModuleIcon";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface WorldMapProps {
@@ -23,6 +24,8 @@ export default function WorldMap({ onNavigate, completedModules }: WorldMapProps
 
     return (
         <div className="w-full h-full relative overflow-hidden bg-[#FAF9F6]">
+
+
             {/* --- BACKGROUND ATMOSPHERE (Mobile Only primarily, but nice everywhere) --- */}
             {/* Distant Hills */}
             <svg className="absolute bottom-0 left-0 w-full h-[40%] pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 400 200">
@@ -79,17 +82,31 @@ export default function WorldMap({ onNavigate, completedModules }: WorldMapProps
                             className="absolute"
                             style={desktopPos}
                         >
-                            <ModuleIcon
-                                Icon={mod.Icon}
-                                id={mod.id}
-                                label={mod.label}
-                                isLocked={isLocked}
-                                isCompleted={isCompleted}
-                                isActive={isActive}
-                                onClick={() => {
-                                    if (!isLocked) onNavigate(mod.id === 'spatial' ? 'spatial' : 'map');
-                                }}
-                            />
+                            {mod.id === 'numbers' && !isLocked ? (
+                                <Link href="/numbers">
+                                    <ModuleIcon
+                                        Icon={mod.Icon}
+                                        id={mod.id}
+                                        label={mod.label}
+                                        isLocked={isLocked}
+                                        isCompleted={isCompleted}
+                                        isActive={isActive}
+                                        as="div"
+                                    />
+                                </Link>
+                            ) : (
+                                <ModuleIcon
+                                    Icon={mod.Icon}
+                                    id={mod.id}
+                                    label={mod.label}
+                                    isLocked={isLocked}
+                                    isCompleted={isCompleted}
+                                    isActive={isActive}
+                                    onClick={() => {
+                                        if (!isLocked) onNavigate(mod.id === 'spatial' ? 'spatial' : 'map');
+                                    }}
+                                />
+                            )}
                         </div>
                     );
                 })}
@@ -124,17 +141,31 @@ export default function WorldMap({ onNavigate, completedModules }: WorldMapProps
                             className="absolute transform -translate-x-1/2 -translate-y-1/2"
                             style={{ left: `${mod.pos.x}%`, top: `${mod.pos.y}%` }}
                         >
-                            <ModuleIcon
-                                Icon={mod.Icon}
-                                id={mod.id}
-                                label={mod.label}
-                                isLocked={isLocked}
-                                isCompleted={isCompleted}
-                                isActive={isActive}
-                                onClick={() => {
-                                    if (!isLocked) onNavigate(mod.id === 'spatial' ? 'spatial' : 'map');
-                                }}
-                            />
+                            {mod.id === 'numbers' && !isLocked ? (
+                                <Link href="/numbers">
+                                    <ModuleIcon
+                                        Icon={mod.Icon}
+                                        id={mod.id}
+                                        label={mod.label}
+                                        isLocked={isLocked}
+                                        isCompleted={isCompleted}
+                                        isActive={isActive}
+                                        as="div"
+                                    />
+                                </Link>
+                            ) : (
+                                <ModuleIcon
+                                    Icon={mod.Icon}
+                                    id={mod.id}
+                                    label={mod.label}
+                                    isLocked={isLocked}
+                                    isCompleted={isCompleted}
+                                    isActive={isActive}
+                                    onClick={() => {
+                                        if (!isLocked) onNavigate(mod.id === 'spatial' ? 'spatial' : 'map');
+                                    }}
+                                />
+                            )}
                         </div>
                     );
                 })}
