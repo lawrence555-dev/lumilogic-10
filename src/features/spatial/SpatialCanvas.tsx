@@ -15,7 +15,7 @@ const HOT_TOLERANCE = 0.35; // ~20 degrees (Green/Hot)
 const WARM_TOLERANCE = 0.8;  // ~45 degrees (Yellow/Warm)
 
 const SAGE_COLOR = new THREE.Color("#A5D6A7");
-const WOOD_COLOR = new THREE.Color("#F5DEB3"); // Lighter Wood
+const WOOD_COLOR = new THREE.Color("#FFEFD5"); // Pale PapayaWhip
 const WHITE_COLOR = new THREE.Color("#FFFFFF");
 
 // --- Components ---
@@ -101,7 +101,10 @@ function GameLogic({
                 return;
             }
 
-            const error = Math.abs(currentAzimuth - TARGET_AZIMUTH);
+            const diff = currentAzimuth - TARGET_AZIMUTH;
+            // Normalize to -PI to PI to handle wrap-around
+            const normalizedDiff = Math.atan2(Math.sin(diff), Math.cos(diff));
+            const error = Math.abs(normalizedDiff);
 
             // 1. Determine Feedback State
             let feedback: 'neutral' | 'warm' | 'hot' = 'neutral';
@@ -135,21 +138,19 @@ function GameLogic({
 
     return (
         <>
-            <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-                <Center>
-                    {/* KID UX 5: Mega Scale 6.5 (4x bigger) */}
-                    <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[6.5, 6.5, 6.5]}>
-                        <meshStandardMaterial
-                            ref={cubeMaterialRef}
-                            color={WOOD_COLOR}
-                            roughness={0.4}
-                            emissive={SAGE_COLOR}
-                            emissiveIntensity={0}
-                        />
-                        <StarMarker />
-                    </RoundedBox>
-                </Center>
-            </Float>
+            <Center>
+                {/* KID UX 6: Stable Scale 6.0 (No Float) */}
+                <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[6.0, 6.0, 6.0]}>
+                    <meshStandardMaterial
+                        ref={cubeMaterialRef}
+                        color={WOOD_COLOR}
+                        roughness={0.4}
+                        emissive={SAGE_COLOR}
+                        emissiveIntensity={0}
+                    />
+                    <StarMarker />
+                </RoundedBox>
+            </Center>
 
             {/* OrbitControls with Damping - Refined & LOCKED Pitch */}
             <OrbitControls
