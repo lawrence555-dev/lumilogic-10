@@ -137,8 +137,8 @@ function GameLogic({
         <>
             <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
                 <Center>
-                    {/* ABSOLUTE FIX: Hardcoded Scale 0.4 */}
-                    <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[0.4, 0.4, 0.4]}>
+                    {/* KID UX: Reduced Scale 0.35 */}
+                    <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[0.35, 0.35, 0.35]}>
                         <meshStandardMaterial
                             ref={cubeMaterialRef}
                             color={WOOD_COLOR}
@@ -202,9 +202,9 @@ export default function SpatialCanvas({ onSuccess }: { onSuccess: () => void }) 
     };
 
     return (
-        <div className="w-full h-full relative bg-neutral-100 rounded-3xl overflow-hidden shadow-inner">
-            {/* Canvas - ABSOLUTE FIX: Camera Position Z=30, FOV=35 */}
-            <Canvas camera={{ position: [0, 0, 30], fov: 35 }}>
+        <div className="w-full h-full relative bg-neutral-100 rounded-3xl overflow-hidden shadow-inner flex items-center justify-center">
+            {/* Canvas - KID UX: Camera Position Z=35 */}
+            <Canvas camera={{ position: [0, 0, 35], fov: 35 }}>
                 <ambientLight intensity={0.7} />
                 <spotLight position={[10, 10, 10]} intensity={1.2} angle={0.5} penumbra={1} castShadow />
                 <pointLight position={[-10, -10, -10]} intensity={0.5} color="#A5D6A7" />
@@ -214,25 +214,20 @@ export default function SpatialCanvas({ onSuccess }: { onSuccess: () => void }) 
                 </Stage>
             </Canvas>
 
-            {/* --- UI OVERLAYS --- */}
-
-            {/* 1. Target Goal ("Match This") - ABSOLUTE FIX: Bottom-10 Right-10 */}
-            <div className="absolute bottom-10 right-10 z-10 flex flex-col items-center gap-2 pointer-events-none">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest bg-white/50 px-2 py-1 rounded-full backdrop-blur-sm">Match This</span>
+            {/* --- KID UX: CENTRAL KEYHOLE OVERLAY --- */}
+            {/* Replaces the complicated corner UI logic */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                {/* Ghost Frame */}
                 <div className={clsx(
-                    "w-24 h-24 bg-white/80 backdrop-blur-md rounded-xl shadow-lg border-4 flex items-center justify-center transition-all duration-500",
+                    "w-64 h-64 border-4 border-dashed rounded-[3rem] flex items-center justify-center transition-all duration-500",
                     isSuccess
-                        ? "scale-110 border-green-400 bg-green-50"
+                        ? "border-green-400 bg-green-400/10 scale-110 opacity-0" // Disappear on win
                         : feedback === 'hot'
-                            ? "border-green-400 scale-105" // Very Close
-                            : feedback === 'warm'
-                                ? "border-yellow-400" // Getting closer
-                                : "border-slate-200"  // Cold
+                            ? "border-green-300 opacity-60 scale-105"
+                            : "border-slate-300/40 opacity-40"
                 )}>
-                    {/* Target Graphic: Square with Star */}
-                    <div className="w-12 h-12 bg-lumi-wood rounded-md flex items-center justify-center opacity-80">
-                        <Star weight="fill" className="text-lumi-sage w-8 h-8" />
-                    </div>
+                    {/* Ghost Star Hint - Shows the target orientation */}
+                    {!isSuccess && <Star weight="fill" className="text-lumi-sage/30 w-32 h-32" />}
                 </div>
             </div>
 
@@ -264,7 +259,7 @@ export default function SpatialCanvas({ onSuccess }: { onSuccess: () => void }) 
                         className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center gap-2"
                     >
                         <HandPointing weight="duotone" className="w-12 h-12 text-slate-400 animate-pulse" />
-                        <span className="text-slate-400 font-baloo bg-white/80 px-4 py-2 rounded-full shadow-sm text-sm">Spin to match!</span>
+                        <span className="text-slate-400 font-baloo bg-white/80 px-4 py-2 rounded-full shadow-sm text-sm">Spin to match the star!</span>
                     </motion.div>
                 )}
             </AnimatePresence>
