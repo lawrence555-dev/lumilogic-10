@@ -1,26 +1,63 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FDFDFD;
+  --foreground: #475569;
+
+  /* Muji Palette */
+  --color-lumi-bg: #FDFDFD;
+  --color-lumi-primary: #5A6A85;
+  --color-lumi-wood: #E0C097;
+  --color-lumi-sage: #A5D6A7;
+
+  /* Font */
+  --font-baloo: var(--font-baloo);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-lumi-bg: var(--color-lumi-bg);
+  --color-lumi-primary: var(--color-lumi-primary);
+  --color-lumi-wood: var(--color-lumi-wood);
+  --color-lumi-sage: var(--color-lumi-sage);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-baloo: var(--font-baloo);
+
+  /* Animations */
+  --animate-bounce-gentle: bounce-gentle 2s infinite ease-in-out;
+  --animate-fog-fade: fog-fade 1s ease-out forwards;
+
+  @keyframes bounce-gentle {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+
+  @keyframes fog-fade {
+    0% {
+      opacity: 0;
+      filter: blur(4px);
+    }
+
+    100% {
+      opacity: 1;
+      filter: blur(0);
+    }
   }
 }
 
+/* Base High-End Feel */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-lumi-bg);
+  color: var(--color-foreground);
+  font-family: var(--font-baloo), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
