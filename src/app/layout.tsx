@@ -14,8 +14,15 @@ export const metadata: Metadata = {
   description: "A 10-Year Logic Journey",
   icons: {
     icon: '/icon.png',
-    apple: '/apple-touch-icon.png',
-  }
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  appleWebApp: {
+    capable: true,
+    title: "LumiLogic",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export default function RootLayout({

@@ -23,7 +23,12 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
     const [page, setPage] = useState(0); // 0: Cover, 1: Chapter 1, 2: Chapter 2
 
     const handleNext = (e: React.MouseEvent) => { e.stopPropagation(); setPage(p => Math.min(p + 1, 2)); };
-    const handlePrev = (e: React.MouseEvent) => { e.stopPropagation(); setPage(p => Math.max(p - 1, 0)); };
+
+    // Explicit Back Logic to prevent confusion or double-triggering "Close"
+    const handlePrev = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setPage(p => Math.max(0, p - 1));
+    };
 
     // Reset page on close
     const handleClose = () => { setPage(0); onClose(); };
@@ -84,59 +89,6 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                             {/* Book Spine/Base */}
                             <div className="absolute left-1/2 top-0 bottom-0 w-4 -ml-2 bg-lumi-wood/20 z-0 rounded-sm" />
 
-                            {/* PAGE 1: COVER (Right side, Rotates Open to become Left) */}
-                            <motion.div
-                                className="absolute inset-y-0 right-0 w-1/2 origin-left bg-[#2c3e50] rounded-r-2xl shadow-2xl flex items-center justify-center text-white border-l border-white/10"
-                                initial={{ rotateY: 0, zIndex: 30 }}
-                                animate={{
-                                    rotateY: page > 0 ? -180 : 0,
-                                    zIndex: page > 0 ? 10 : 30
-                                }}
-                                transition={{ duration: 0.8, type: "spring", damping: 20 }}
-                                style={{ transformStyle: "preserve-3d", backfaceVisibility: "hidden" }}
-                                onClick={() => page === 0 && setPage(1)}
-                            >
-                                <div className="text-center p-12 border-4 border-lumi-wood/50 rounded-xl m-8">
-                                    <div className="w-24 h-24 mx-auto mb-6 bg-lumi-wood rounded-full flex items-center justify-center">
-                                        <Cube weight="duotone" className="w-12 h-12 text-[#2c3e50]" />
-                                    </div>
-                                    <h1 className="text-4xl font-baloo font-bold tracking-wider mb-2">PASSPORT</h1>
-                                    <p className="opacity-60 text-sm tracking-[0.2em]">LUMINARY EDITION</p>
-                                    <p className="mt-8 text-xs opacity-40">Tap to Open</p>
-                                </div>
-                            </motion.div>
-
-                            {/* PAGE 1 BACK: BIO (Left side when open) */}
-                            <motion.div
-                                className="absolute inset-y-0 right-0 w-1/2 origin-left bg-[#f8f9fa] rounded-l-2xl shadow-xl flex flex-col items-center justify-center p-12 border-r border-slate-200"
-                                initial={{ rotateY: 0, zIndex: 1 }}
-                                // This needs to follow the cover. It is the "Back" of the cover.
-                                // But wait, "backface-visibility: hidden" on cover means we just need another div rotated 180.
-                                // Actually, let's attach it to the same motion value or just use the same logic.
-                                style={{
-                                    transformStyle: "preserve-3d",
-                                    backfaceVisibility: "hidden",
-                                    rotateY: 180
-                                }}
-                                animate={{
-                                    rotateY: page > 0 ? -180 : 0 // Matches the cover's rotation exactly.
-                                    // But it starts at 180 relative to the cover? No.
-                                    // It is the back face. So if Cover is at 0, this is at 180 (facing away).
-                                    // When Cover rotates to -180, this rotates to -360 (or 0), facing the viewer on the left?
-                                    // Actually, let's just animate it parallel to the cover.
-                                }}
-                            >
-                                {/* 
-                       Wait, simpler approach for "Back Face":
-                       Put both Front and Back in a container and rotate the container.
-                       Container: Right side, origin-left.
-                       State 0: Rotation 0. Front visible.
-                       State 1: Rotation -180. Back visible (now on left side).
-                     */}
-                            </motion.div>
-
-                            {/* RE-IMPLEMENTING WITH CONTAINER APPROACH FOR COVER */}
-
                             {/* COVER CONTAINER (Right Side -> Flips Left) */}
                             <motion.div
                                 className="absolute inset-y-0 right-0 w-1/2 origin-left"
@@ -158,7 +110,8 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                 </div>
 
                                 {/* BACK FACE (The Bio - Visible when flipped to left) */}
-                                <div className="absolute inset-0 bg-[#f8f9fa] rounded-l-2xl shadow-xl flex flex-col items-center justify-center p-12 border-r border-slate-200"
+                                {/* FIX: Add opacity-0 when on cover to prevent white bleed */}
+                                <div className={clsx("absolute inset-0 bg-[#f8f9fa] rounded-l-2xl shadow-xl flex flex-col items-center justify-center p-12 border-r border-slate-200 transition-opacity duration-300", page === 0 ? "opacity-0 pointer-events-none" : "opacity-100")}
                                     style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
 
                                     {/* Prev Button (Flip Back to Cover) */}
@@ -190,10 +143,6 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                             </motion.div>
 
 
-                            {/* PAGE 2 CONTAINER (Right Side - Chapter 1) */}
-                            {/* This page stays on the right initially (behind cover). When cover flips left, this is revealed.
-                    Then IT flips left to reveal Chapter 2.
-                */}
                             {/* PAGE 2 CONTAINER (Right Side - Chapter 1) */}
                             <motion.div
                                 className={clsx("absolute inset-y-0 right-0 w-1/2 origin-left", page === 0 ? "opacity-0 pointer-events-none" : "opacity-100")}
@@ -242,8 +191,11 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                             <h4 className="font-bold text-slate-500">Chapter 1 Complete</h4>
                                             <p className="text-slate-400 text-sm mt-2">5/5 Stamps Collected</p>
                                         </div>
-                                        {/* Prev Button (Flip Back to Chapter 1 Front) */}
-                                        <button onClick={handlePrev} className="absolute left-6 top-6 p-2 hover:bg-white rounded-full text-lumi-primary transition-colors cursor-pointer shadow-sm">
+                                        {/* Prev Button (Flip Back to Chapter 1 Front via EXPLICIT Page Set) */}
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setPage(1); }} // EXPLICITLY Go to Page 1
+                                            className="absolute left-6 top-6 p-2 hover:bg-white rounded-full text-lumi-primary transition-colors cursor-pointer shadow-sm"
+                                        >
                                             <CaretLeft weight="bold" className="w-6 h-6" />
                                         </button>
                                     </div>
@@ -262,7 +214,11 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                             {/* Global Prev Button (Desktop) - ABSOLUTE FIX */}
                             {page > 0 && (
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); setPage(p => Math.max(0, p - 1)); }}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setPage(p => Math.max(0, p - 1));
+                                    }}
                                     className="absolute -left-16 top-1/2 -translate-y-1/2 p-3 bg-white/80 hover:bg-white rounded-full text-lumi-primary shadow-lg backdrop-blur-sm transition-all z-50 hover:scale-110"
                                     title="Previous Page"
                                 >
