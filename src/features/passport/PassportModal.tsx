@@ -114,7 +114,8 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                 <div className={clsx("absolute inset-0 bg-[#f8f9fa] rounded-l-2xl shadow-xl flex flex-col items-center justify-center p-12 border-r border-slate-200 transition-opacity duration-300", page === 0 ? "opacity-0 pointer-events-none" : "opacity-100")}
                                     style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
 
-                                    {/* Prev Button (Flip Back to Cover) */}
+                                    {/* Prev Button REMOVED - Redundant with Global Prev */}
+                                    {/* 
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setPage(0); }}
                                         className="absolute left-6 top-6 p-2 hover:bg-slate-100 rounded-full text-lumi-primary transition-colors cursor-pointer"
@@ -122,6 +123,7 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                     >
                                         <CaretLeft weight="bold" className="w-6 h-6" />
                                     </button>
+                                     */}
 
                                     <div className="w-32 h-32 bg-slate-200 rounded-full mb-6 border-4 border-lumi-wood overflow-hidden relative">
                                         <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-slate-400">L</div>
@@ -191,13 +193,15 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                             <h4 className="font-bold text-slate-500">Chapter 1 Complete</h4>
                                             <p className="text-slate-400 text-sm mt-2">5/5 Stamps Collected</p>
                                         </div>
-                                        {/* Prev Button (Flip Back to Chapter 1 Front) */}
+                                        {/* Prev Button REMOVED - Redundant with Global Prev */}
+                                        {/*
                                         <button
                                             onClick={(e) => { e.stopPropagation(); setPage(1); }} // EXPLICIT
                                             className="absolute left-6 top-6 p-2 hover:bg-white rounded-full text-lumi-primary transition-colors cursor-pointer shadow-sm"
                                         >
                                             <CaretLeft weight="bold" className="w-6 h-6" />
                                         </button>
+                                         */}
                                     </div>
                                 </motion.div>
                             </motion.div>

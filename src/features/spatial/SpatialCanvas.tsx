@@ -209,9 +209,7 @@ export default function SpatialCanvas({ onSuccess }: { onSuccess: () => void }) 
                 <spotLight position={[10, 10, 10]} intensity={1.2} angle={0.5} penumbra={1} castShadow />
                 <pointLight position={[-10, -10, -10]} intensity={0.5} color="#A5D6A7" />
 
-                <Stage environment={null} intensity={0.5} shadows={false}>
-                    <GameLogic onSuccess={handleWin} setFeedback={setFeedback} />
-                </Stage>
+                <GameLogic onSuccess={handleWin} setFeedback={setFeedback} />
             </Canvas>
 
             {/* --- KID UX: CENTRAL KEYHOLE OVERLAY --- */}
