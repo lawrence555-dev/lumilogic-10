@@ -15,6 +15,7 @@ import StampOverlay from "@/features/passport/StampOverlay";
 export default function NumbersLevel() {
     const [isBalanced, setIsBalanced] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
     // WIN LOGIC: 1.5s Hold
@@ -84,20 +85,20 @@ export default function NumbersLevel() {
                         <BalanceScale onBalanceChange={setIsBalanced} />
 
                         {/* --- PINECONES --- */}
-                        {/* 1. Left Tray (Pre-filled x3) - Spawn above tray */}
-                        <Pinecone position={[-4, 4.5, 0]} />
-                        <Pinecone position={[-4.2, 5.0, 0]} />
-                        <Pinecone position={[-3.8, 4.8, 0]} />
+                        {/* 1. Left Tray (Pre-filled x3) - Spawn lower and spread out to avoid bounce out */}
+                        <Pinecone position={[-4.5, 2.5, 0.4]} onDragChange={setIsDragging} />
+                        <Pinecone position={[-3.5, 2.5, 0.4]} onDragChange={setIsDragging} />
+                        <Pinecone position={[-4.0, 2.5, -0.4]} onDragChange={setIsDragging} />
 
                         {/* 2. User Supply (Bottom Area) */}
                         <SupplyShelf position={[0, -2.5, 3]} />
                         {/* A row of pinecones ready to pick */}
-                        <Pinecone position={[-2.5, -1.8, 3]} />
-                        <Pinecone position={[-1.5, -1.8, 3]} />
-                        <Pinecone position={[-0.5, -1.8, 3]} />
-                        <Pinecone position={[0.5, -1.8, 3]} />
-                        <Pinecone position={[1.5, -1.8, 3]} />
-                        <Pinecone position={[2.5, -1.8, 3]} />
+                        <Pinecone position={[-2.5, -1.8, 3]} onDragChange={setIsDragging} />
+                        <Pinecone position={[-1.5, -1.8, 3]} onDragChange={setIsDragging} />
+                        <Pinecone position={[-0.5, -1.8, 3]} onDragChange={setIsDragging} />
+                        <Pinecone position={[0.5, -1.8, 3]} onDragChange={setIsDragging} />
+                        <Pinecone position={[1.5, -1.8, 3]} onDragChange={setIsDragging} />
+                        <Pinecone position={[2.5, -1.8, 3]} onDragChange={setIsDragging} />
 
                         {/* Extra */}
                         <Pinecone position={[3, -3, 2]} />
@@ -110,6 +111,7 @@ export default function NumbersLevel() {
                     makeDefault
                     enableZoom={false}
                     enablePan={false}
+                    enabled={!isDragging}
                     maxPolarAngle={Math.PI / 2 - 0.1}
                     minPolarAngle={Math.PI / 4}
                 />

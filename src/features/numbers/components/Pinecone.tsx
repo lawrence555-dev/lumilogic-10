@@ -6,7 +6,7 @@ import { useDrag } from "@use-gesture/react";
 import { useState } from "react";
 import * as THREE from "three";
 
-export function Pinecone({ position = [0, 5, 0] }: { position?: [number, number, number] }) {
+export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [number, number, number], onDragChange?: (dragging: boolean) => void }) {
     const { size, viewport } = useThree();
 
     // Physics Body
@@ -19,7 +19,11 @@ export function Pinecone({ position = [0, 5, 0] }: { position?: [number, number,
     }));
 
     // Binding Drag - Absolute Mapping for reliability
-    const bind = useDrag(({ xy: [screenX, screenY], active, last }) => {
+    const bind = useDrag(({ xy: [screenX, screenY], active, last, first }) => {
+        // Notify Parent
+        if (first) onDragChange?.(true);
+        if (last) onDragChange?.(false);
+
         // Map Screen Pixels to World Units (Z=0 Plane)
         const x = (screenX / size.width) * viewport.width - viewport.width / 2;
         const y = -(screenY / size.height) * viewport.height + viewport.height / 2;
