@@ -19,19 +19,23 @@ export function Pinecone({ position = [0, 5, 0] }: { position?: [number, number,
     }));
 
     // Binding Drag - Absolute Mapping for reliability
-    const bind = useDrag(({ xy: [screenX, screenY], active }) => {
-        if (active) {
-            // Map Screen Pixels to World Units (Z=0 Plane)
-            // 1. Center the coordinate (0,0 at center)
-            // 2. Scale by viewport size
-            const x = (screenX / size.width) * viewport.width - viewport.width / 2;
-            const y = -(screenY / size.height) * viewport.height + viewport.height / 2;
+    const bind = useDrag(({ xy: [screenX, screenY], active, last }) => {
+        // Map Screen Pixels to World Units (Z=0 Plane)
+        const x = (screenX / size.width) * viewport.width - viewport.width / 2;
+        const y = -(screenY / size.height) * viewport.height + viewport.height / 2;
 
-            // Lift slightly to Z=1 to clear edges while dragging
-            api.position.set(x, y, 1);
+        if (active) {
+            // Dragging: Move smoothly at Z=2 (In front of collision)
+            api.position.set(x, y, 2);
             api.velocity.set(0, 0, 0);
             api.angularVelocity.set(0, 0, 0);
             api.wakeUp();
+        } else if (last) {
+            // Released: Snap to Z=0 (Inside the tray depth)
+            api.position.set(x, y, 0);
+            api.velocity.set(0, 0, 0);
+            api.angularVelocity.set(0, 0, 0);
+            api.wakeUp(); // Let gravity take over
         }
     });
 
