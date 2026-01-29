@@ -85,9 +85,9 @@ export default function NumbersLevel() {
 
                         {/* --- PINECONES --- */}
                         {/* 1. Left Tray (Pre-filled x3) - Spawn above tray */}
-                        <Pinecone position={[-4, 2, 0]} />
-                        <Pinecone position={[-4.2, 3, 0]} />
-                        <Pinecone position={[-3.8, 2.5, 0]} />
+                        <Pinecone position={[-4, 4.5, 0]} />
+                        <Pinecone position={[-4.2, 5.0, 0]} />
+                        <Pinecone position={[-3.8, 4.8, 0]} />
 
                         {/* 2. User Supply (Bottom Area) */}
                         {/* A row of pinecones ready to pick */}

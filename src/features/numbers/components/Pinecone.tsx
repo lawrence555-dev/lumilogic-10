@@ -8,7 +8,6 @@ import * as THREE from "three";
 
 export function Pinecone({ position = [0, 5, 0] }: { position?: [number, number, number] }) {
     const { size, viewport } = useThree();
-    const aspect = size.width / viewport.width;
 
     // Physics Body
     const [ref, api] = useSphere(() => ({
@@ -19,24 +18,19 @@ export function Pinecone({ position = [0, 5, 0] }: { position?: [number, number,
         angularDamping: 0.5,
     }));
 
-    const [isDragging, setIsDragging] = useState(false);
-
-    // Binding Drag
-    const bind = useDrag(({ offset: [x, y], active }) => {
+    // Binding Drag - Absolute Mapping for reliability
+    const bind = useDrag(({ xy: [screenX, screenY], active }) => {
         if (active) {
-            setIsDragging(true);
-            // Convert 2D screen coordinates to 3D world coordinates
-            // Simple mapping: 
-            // x / aspect -> World X
-            // -y / aspect -> World Y
-            const worldX = (x / aspect);
-            const worldY = (-y / aspect);
+            // Map Screen Pixels to World Units (Z=0 Plane)
+            // 1. Center the coordinate (0,0 at center)
+            // 2. Scale by viewport size
+            const x = (screenX / size.width) * viewport.width - viewport.width / 2;
+            const y = -(screenY / size.height) * viewport.height + viewport.height / 2;
 
-            // Lift it up a bit towards camera (Z=2) to clear collision
-            api.position.set(worldX, worldY, 0);
-            api.velocity.set(0, 0, 0); // Stop momentum while holding
+            // Lift slightly to Z=1 to clear edges while dragging
+            api.position.set(x, y, 1);
+            api.velocity.set(0, 0, 0);
             api.angularVelocity.set(0, 0, 0);
-            // Release: Let gravity take over
             api.wakeUp();
         }
     });
