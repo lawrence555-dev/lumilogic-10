@@ -110,7 +110,7 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                 </div>
 
                                 {/* BACK FACE (The Bio - Visible when flipped to left) */}
-                                {/* FIX: Add opacity-0 when on cover to prevent white bleed */}
+                                {/* FIX: opacity-0 when on cover prevents white bleed */}
                                 <div className={clsx("absolute inset-0 bg-[#f8f9fa] rounded-l-2xl shadow-xl flex flex-col items-center justify-center p-12 border-r border-slate-200 transition-opacity duration-300", page === 0 ? "opacity-0 pointer-events-none" : "opacity-100")}
                                     style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
 
@@ -191,9 +191,9 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                             <h4 className="font-bold text-slate-500">Chapter 1 Complete</h4>
                                             <p className="text-slate-400 text-sm mt-2">5/5 Stamps Collected</p>
                                         </div>
-                                        {/* Prev Button (Flip Back to Chapter 1 Front via EXPLICIT Page Set) */}
+                                        {/* Prev Button (Flip Back to Chapter 1 Front) */}
                                         <button
-                                            onClick={(e) => { e.stopPropagation(); setPage(1); }} // EXPLICITLY Go to Page 1
+                                            onClick={(e) => { e.stopPropagation(); setPage(1); }} // EXPLICIT
                                             className="absolute left-6 top-6 p-2 hover:bg-white rounded-full text-lumi-primary transition-colors cursor-pointer shadow-sm"
                                         >
                                             <CaretLeft weight="bold" className="w-6 h-6" />
@@ -204,7 +204,12 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
 
                             {/* PAGE 3 (Chapter 2) - STATIC RIGHT LAYER */}
                             {/* Revealed when Chapter 1 Flips Left */}
-                            <div className="absolute inset-y-0 right-0 w-1/2 bg-slate-100 rounded-r-2xl shadow-inner p-12 flex flex-col items-center justify-center border-l border-slate-200" style={{ zIndex: 1 }}>
+                            {/* FIX: Add opacity transition to hide when closed (page=0) AND when on Chapter 1 (page=1) if desired? 
+                                No, if page=1, Chapter 1 covers it. 
+                                But to be safe, opacity-100 only if page >= 1. 
+                                Actually, if page=0, opacity-0.
+                            */}
+                            <div className={clsx("absolute inset-y-0 right-0 w-1/2 bg-slate-100 rounded-r-2xl shadow-inner p-12 flex flex-col items-center justify-center border-l border-slate-200 transition-opacity duration-300", page === 0 ? "opacity-0 pointer-events-none" : "opacity-100")} style={{ zIndex: 1 }}>
                                 <Lock weight="duotone" className="w-24 h-24 text-slate-300 mb-4" />
                                 <h2 className="text-2xl font-bold text-slate-400">Chapter 2</h2>
                                 <p className="text-slate-400 mb-8">Coming Soon</p>

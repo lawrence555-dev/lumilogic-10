@@ -137,8 +137,8 @@ function GameLogic({
         <>
             <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
                 <Center>
-                    {/* KID UX 2: Reduced Scale 0.25 (Tiny) */}
-                    <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[0.25, 0.25, 0.25]}>
+                    {/* KID UX 3: Micro Scale 0.2 */}
+                    <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[0.2, 0.2, 0.2]}>
                         <meshStandardMaterial
                             ref={cubeMaterialRef}
                             color={WOOD_COLOR}
@@ -203,8 +203,8 @@ export default function SpatialCanvas({ onSuccess }: { onSuccess: () => void }) 
 
     return (
         <div className="w-full h-full relative bg-neutral-100 rounded-3xl overflow-hidden shadow-inner flex items-center justify-center">
-            {/* Canvas - KID UX 2: Camera Position Z=40 */}
-            <Canvas camera={{ position: [0, 0, 40], fov: 35 }}>
+            {/* Canvas - KID UX 3: Camera Position Z=45 */}
+            <Canvas camera={{ position: [0, 0, 45], fov: 35 }}>
                 <ambientLight intensity={0.7} />
                 <spotLight position={[10, 10, 10]} intensity={1.2} angle={0.5} penumbra={1} castShadow />
                 <pointLight position={[-10, -10, -10]} intensity={0.5} color="#A5D6A7" />
