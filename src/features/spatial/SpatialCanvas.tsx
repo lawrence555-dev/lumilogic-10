@@ -15,7 +15,7 @@ const HOT_TOLERANCE = 0.35; // ~20 degrees (Green/Hot)
 const WARM_TOLERANCE = 0.8;  // ~45 degrees (Yellow/Warm)
 
 const SAGE_COLOR = new THREE.Color("#A5D6A7");
-const WOOD_COLOR = new THREE.Color("#E0C097");
+const WOOD_COLOR = new THREE.Color("#F5DEB3"); // Lighter Wood
 const WHITE_COLOR = new THREE.Color("#FFFFFF");
 
 // --- Components ---
@@ -137,8 +137,8 @@ function GameLogic({
         <>
             <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
                 <Center>
-                    {/* KID UX 4: Goldilocks Scale 1.8 */}
-                    <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[1.8, 1.8, 1.8]}>
+                    {/* KID UX 5: Mega Scale 6.5 (4x bigger) */}
+                    <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[6.5, 6.5, 6.5]}>
                         <meshStandardMaterial
                             ref={cubeMaterialRef}
                             color={WOOD_COLOR}
@@ -151,12 +151,14 @@ function GameLogic({
                 </Center>
             </Float>
 
-            {/* OrbitControls with Damping - Refined */}
+            {/* OrbitControls with Damping - Refined & LOCKED Pitch */}
             <OrbitControls
                 enableZoom={false}
                 enablePan={false}
                 rotateSpeed={0.8}
                 dampingFactor={0.1}
+                minPolarAngle={Math.PI / 2}
+                maxPolarAngle={Math.PI / 2}
             />
         </>
     );
