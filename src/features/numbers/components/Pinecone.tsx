@@ -7,7 +7,7 @@ import { useState } from "react";
 import * as THREE from "three";
 
 export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [number, number, number], onDragChange?: (dragging: boolean) => void }) {
-    const { size, viewport } = useThree();
+    const { size, viewport, camera } = useThree();
 
     // Physics Body
     const [ref, api] = useSphere(() => ({
@@ -26,14 +26,19 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
         if (first) onDragChange?.(true);
         if (last) onDragChange?.(false);
 
-        // Map Screen Pixels to World Units (Z=0 Plane)
-        const x = (screenX / size.width) * viewport.width - viewport.width / 2;
-        const y = -(screenY / size.height) * viewport.height + viewport.height / 2;
+        // Perspective Correction
+        const dragZ = 3;
+        const cameraZ = camera.position.z;
+        const scaleFactor = (cameraZ - dragZ) / cameraZ;
+
+        // Map Screen Pixels to World Units (at Z=3 plane)
+        const x = ((screenX / size.width) * viewport.width - viewport.width / 2) * scaleFactor;
+        const y = (-(screenY / size.height) * viewport.height + viewport.height / 2) * scaleFactor;
 
         if (active) {
             setHeld(true);
             // Dragging: Move smoothly at Z=3 (Safe foreground)
-            api.position.set(x, y, 3);
+            api.position.set(x, y, dragZ);
             api.velocity.set(0, 0, 0);
             api.angularVelocity.set(0, 0, 0);
             api.wakeUp();
