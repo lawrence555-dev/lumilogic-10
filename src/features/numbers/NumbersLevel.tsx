@@ -44,7 +44,10 @@ export default function NumbersLevel() {
     };
 
     return (
-        <div className="w-full h-full relative overflow-hidden flex items-center justify-center">
+        <div className={clsx(
+            "w-full h-full relative overflow-hidden flex items-center justify-center",
+            isDragging ? "cursor-grabbing" : "cursor-grab"
+        )}>
             {/* --- UI LAYER --- */}
             {/* Top Bar */}
             <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10 pointer-events-none">

@@ -18,6 +18,8 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
         angularDamping: 0.5,
     }));
 
+    const [isHeld, setHeld] = useState(false);
+
     // Binding Drag - Absolute Mapping for reliability
     const bind = useDrag(({ xy: [screenX, screenY], active, last, first }) => {
         // Notify Parent
@@ -29,8 +31,9 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
         const y = -(screenY / size.height) * viewport.height + viewport.height / 2;
 
         if (active) {
-            // Dragging: Move smoothly at Z=5 (Very close to camera for visibility)
-            api.position.set(x, y, 5);
+            setHeld(true);
+            // Dragging: Move smoothly at Z=3 (Safe foreground)
+            api.position.set(x, y, 3);
             api.velocity.set(0, 0, 0);
             api.angularVelocity.set(0, 0, 0);
             api.wakeUp();
@@ -50,12 +53,13 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
             api.wakeUp(); // Let gravity take over
 
             if (last) onDragChange?.(false);
+            if (last) setHeld(false);
         }
     });
 
     return (
         // @ts-ignore
-        <mesh ref={ref} {...bind()} castShadow>
+        <mesh ref={ref} {...bind()} castShadow scale={isHeld ? 1.2 : 1}>
             {/* Visual: Abstract Pinecone (Icosahedron) */}
             <icosahedronGeometry args={[0.4, 0]} />
             <meshStandardMaterial
