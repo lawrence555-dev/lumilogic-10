@@ -78,3 +78,18 @@
 - ✅ `[文件]: 更新 WORKFLOW.md`
 - ❌ `Added new feature` (未標示類型)
 - ❌ `feat: update UI` (請使用中文方括號格式)
+
+---
+
+## 5. 語言規範 (Language Standards)
+
+為了確保團隊溝通順暢與產品國際化，請遵循以下語言分工：
+
+### 5.1. 產品介面 (Product UI)
+- **全面英文 (English Only)**: App 的所有顯示文字、按鈕、標題、提示皆須使用英文。
+- **目標**: 打造國際化產品質感。
+
+### 5.2. 開發溝通 (Development & Docs)
+- **Git Commit**: 必須使用 **繁體中文** (搭配 `[類型]:` 格式)。
+- **文件 (Workflow/Task)**: 必須使用 **繁體中文**。
+- **代碼註解 (Code Comments)**: 建議使用 **繁體中文** 解釋複雜邏輯，確保團隊理解。
