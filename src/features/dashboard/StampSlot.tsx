@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { SealCheck, Lock, Circle, Star, Check } from "@phosphor-icons/react";
+import { SealCheck, Lock, Circle, Star } from "@phosphor-icons/react";
 import clsx from "clsx";
 import type { DayData } from "@/hooks/useMonthlyProgress";
 
@@ -20,9 +20,9 @@ export default function StampSlot({ data, onClick }: StampSlotProps) {
     return (
         <motion.button
             onClick={onClick}
-            disabled={isLocked || isCompleted}
-            whileHover={isActive ? { scale: 1.05 } : {}}
-            whileTap={isActive ? { scale: 0.95 } : {}}
+            disabled={isLocked}
+            whileHover={!isLocked ? { scale: 1.05 } : {}}
+            whileTap={!isLocked ? { scale: 0.95 } : {}}
             className={clsx(
                 "relative flex flex-col items-center justify-center w-full aspect-[4/5] rounded-xl border-2 transition-all duration-300",
                 isLocked && "bg-slate-50 border-slate-100 text-slate-300",
