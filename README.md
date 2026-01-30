@@ -3,7 +3,6 @@
 歡迎來到 **LumiLogic 10**！這是一個結合 **Next.js 14+**、**React Three Fiber (R3F)** 與 **Tailwind CSS** 的互動式邏輯訓練與冒險平台。
 
 > 📖 **[閱讀設計概念與開發白皮書 (Design Concept)](./DESIGN_CONCEPT.md)** - 了解我們的設計哲學、競賽亮點與未來藍圖。
-> 📷 **[🇯🇵 東京行：X-M5 專屬底片配方全清單 (Tokyo Trip)](./Tokyo_Trip_Planner.md)** - 7 月東京行完整優化參數檢查表。
 
 ---
 
