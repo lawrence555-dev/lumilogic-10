@@ -61,7 +61,10 @@ export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalance
 
     const [isLevel, setIsLevel] = useState(false);
 
-    useFrame(() => {
+    useFrame(({ clock }) => {
+        // Ignore startup physics settling time (prevents premature win)
+        if (clock.elapsedTime < 2) return;
+
         // Z-axis rotation (Tilt)
         const tilt = rotation.current[2];
         const balanced = Math.abs(tilt) < 0.2; // Relaxed tolerance (~11 deg) for better UX

@@ -64,7 +64,14 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
 
     return (
         // @ts-ignore
-        <mesh ref={ref} {...bind()} castShadow scale={isHeld ? 1.2 : 1}>
+        <mesh
+            ref={ref}
+            {...bind()}
+            castShadow
+            scale={isHeld ? 1.2 : 1}
+            onPointerOver={() => (document.body.style.cursor = "grab")}
+            onPointerOut={() => (document.body.style.cursor = "auto")}
+        >
             {/* Visual: Abstract Pinecone (Icosahedron) */}
             <icosahedronGeometry args={[0.4, 0]} />
             <meshStandardMaterial
