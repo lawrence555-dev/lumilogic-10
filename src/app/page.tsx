@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { House } from "@phosphor-icons/react";
 import GameContainer from "@/components/layout/GameContainer";
 import WorldMap from "@/components/navigation/WorldMap";
@@ -16,6 +16,18 @@ export default function Home() {
   const [completedModules, setCompletedModules] = useState<string[]>([]);
   const [showStamp, setShowStamp] = useState(false);
 
+  // Load progress on mount
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("lumilogic_stamps") || '[]');
+      if (Array.isArray(saved)) {
+        setCompletedModules(saved);
+      }
+    } catch (e) {
+      console.error("Failed to load progress", e);
+    }
+  }, []);
+
   const handleOpenPassport = () => {
     setIsPassportOpen(true);
     setHasNotification(false);
@@ -30,9 +42,11 @@ export default function Home() {
 
   const handleStampComplete = () => {
     setShowStamp(false);
-    // 3. Mark as Complete
+    // 3. Mark as Complete & Persist
     if (!completedModules.includes("spatial")) {
-      setCompletedModules(prev => [...prev, "spatial"]);
+      const newModules = [...completedModules, "spatial"];
+      setCompletedModules(newModules);
+      localStorage.setItem("lumilogic_stamps", JSON.stringify(newModules));
       setHasNotification(true); // New notification for the new stamp
     }
     // 4. Return to Map
