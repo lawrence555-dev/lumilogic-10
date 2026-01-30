@@ -6,6 +6,7 @@ import { Environment, OrbitControls, RoundedBox } from "@react-three/drei";
 import { Suspense, useState, useEffect } from "react";
 import { House, IdentificationCard, ArrowsClockwise } from "@phosphor-icons/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import clsx from "clsx";
 
 import { BalanceScale } from "./components/BalanceScale";
@@ -13,6 +14,7 @@ import { Pinecone } from "./components/Pinecone";
 import StampOverlay from "@/features/passport/StampOverlay";
 
 export default function NumbersLevel() {
+    const router = useRouter();
     const [isBalanced, setIsBalanced] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
@@ -48,8 +50,19 @@ export default function NumbersLevel() {
     };
 
     const handleStampComplete = () => {
-        // Navigate or Update State
-        // For now, just close overlay or redirect
+        // 1. Save Progress (Unlock Level 3)
+        try {
+            const savedStamps = JSON.parse(localStorage.getItem("lumilogic_stamps") || '["spatial"]');
+            if (!savedStamps.includes("numbers")) {
+                savedStamps.push("numbers");
+                localStorage.setItem("lumilogic_stamps", JSON.stringify(savedStamps));
+            }
+        } catch (e) {
+            console.error("Failed to save progress", e);
+        }
+
+        // 2. Navigate Home
+        router.push("/");
     };
 
     return (
@@ -102,7 +115,10 @@ export default function NumbersLevel() {
                         </mesh>
 
                         {/* SCALE: Update Logic on Balance */}
-                        <BalanceScale onBalanceChange={setIsBalanced} />
+                        <BalanceScale
+                            onBalanceChange={setIsBalanced}
+                            forceBalance={basketCounts.size === 3}
+                        />
 
                         {/* --- PINECONES --- */}
                         {/* 1. Left Tray (Pre-filled x3) - Spawn lower and spread out to avoid bounce out */}

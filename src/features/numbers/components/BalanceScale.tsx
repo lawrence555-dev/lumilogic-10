@@ -10,7 +10,7 @@ import { useFrame } from "@react-three/fiber";
 const WOOD_COLOR = new THREE.Color("#E0C097");
 const SAGE_COLOR = new THREE.Color("#A5D6A7");
 
-export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalanced: boolean) => void }) {
+export function BalanceScale({ onBalanceChange, forceBalance = false }: { onBalanceChange?: (isBalanced: boolean) => void, forceBalance?: boolean }) {
     // 1. BASE (Static)
     // A vertical post standing on the ground
     const [baseRef] = useCylinder(() => ({
@@ -63,6 +63,16 @@ export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalance
     const [isLevel, setIsLevel] = useState(false);
 
     useFrame(({ clock }) => {
+        // Force Balance (Win State Visual)
+        if (forceBalance) {
+            // Damping rotation to 0
+            api.angularVelocity.set(0, 0, 0);
+            // Lerp rotation to 0 (Soft Snap)
+            const currentTilt = rotation.current[2];
+            const nextTilt = THREE.MathUtils.lerp(currentTilt, 0, 0.1);
+            api.rotation.set(0, 0, nextTilt);
+        }
+
         // Ignore startup physics settling time (prevents premature win)
         if (clock.elapsedTime < 2) return;
 

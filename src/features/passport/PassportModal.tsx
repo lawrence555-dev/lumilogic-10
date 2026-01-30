@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CaretRight, CaretLeft, Cube, Scales, PuzzlePiece, Shapes, GitBranch, Lock } from "@phosphor-icons/react";
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface PassportModalProps {
     isOpen: boolean;
@@ -17,10 +17,18 @@ const STAMPS = [
     { id: 'logic', Icon: PuzzlePiece, label: 'Logic' },
     { id: 'patterns', Icon: Shapes, label: 'Pattern' },
     { id: 'algo', Icon: GitBranch, label: 'Algo' },
-].map((s, i) => ({ ...s, unlocked: i === 0 }));
+];
 
 export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
     const [page, setPage] = useState(0); // 0: Cover, 1: Chapter 1, 2: Chapter 2
+    const [unlockedStamps, setUnlockedStamps] = useState<string[]>(['spatial']);
+
+    useEffect(() => {
+        if (isOpen) {
+            const saved = JSON.parse(localStorage.getItem("lumilogic_stamps") || '["spatial"]');
+            setUnlockedStamps(saved);
+        }
+    }, [isOpen]);
 
     const handleNext = (e: React.MouseEvent) => { e.stopPropagation(); setPage(p => Math.min(p + 1, 2)); };
 
@@ -67,12 +75,15 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                             <div className="w-full bg-slate-50 rounded-xl p-4 border border-slate-100">
                                 <h3 className="font-bold text-lumi-wood mb-4 flex items-center gap-2"><Cube /> Chapter 1: The Forest</h3>
                                 <div className="grid grid-cols-3 gap-3">
-                                    {STAMPS.map(stamp => (
-                                        <div key={stamp.id} className={clsx("aspect-square rounded border-2 flex flex-col items-center justify-center gap-1", stamp.unlocked ? "bg-lumi-sage/10 border-lumi-sage" : "bg-white border-slate-100 border-dashed")}>
-                                            {stamp.unlocked ? <stamp.Icon weight="fill" className="text-lumi-sage w-6 h-6" /> : <stamp.Icon weight="thin" className="text-slate-300 w-6 h-6" />}
-                                            <span className="text-[9px] uppercase font-bold text-slate-400">{stamp.label}</span>
-                                        </div>
-                                    ))}
+                                    {STAMPS.map(stamp => {
+                                        const isUnlocked = unlockedStamps.includes(stamp.id);
+                                        return (
+                                            <div key={stamp.id} className={clsx("aspect-square rounded border-2 flex flex-col items-center justify-center gap-1", isUnlocked ? "bg-lumi-sage/10 border-lumi-sage" : "bg-white border-slate-100 border-dashed")}>
+                                                {isUnlocked ? <stamp.Icon weight="fill" className="text-lumi-sage w-6 h-6" /> : <stamp.Icon weight="thin" className="text-slate-300 w-6 h-6" />}
+                                                <span className="text-[9px] uppercase font-bold text-slate-400">{stamp.label}</span>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
@@ -172,18 +183,21 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                     </div>
 
                                     <div className="grid grid-cols-4 gap-4">
-                                        {STAMPS.map(stamp => (
-                                            <div key={stamp.id} className={clsx("aspect-square rounded-xl border-2 flex flex-col items-center justify-center relative transition-all group", stamp.unlocked ? "border-lumi-sage bg-lumi-sage/5" : "border-slate-100 bg-slate-50 border-dashed")}>
-                                                {stamp.unlocked ? (
-                                                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-lumi-sage drop-shadow-sm">
-                                                        <stamp.Icon weight="fill" className="w-10 h-10" />
-                                                    </motion.div>
-                                                ) : (
-                                                    <stamp.Icon weight="thin" className="w-8 h-8 text-slate-200" />
-                                                )}
-                                                <span className={clsx("absolute bottom-2 text-[10px] font-bold uppercase tracking-wider", stamp.unlocked ? "text-lumi-sage" : "text-slate-300")}>{stamp.label}</span>
-                                            </div>
-                                        ))}
+                                        {STAMPS.map(stamp => {
+                                            const isUnlocked = unlockedStamps.includes(stamp.id);
+                                            return (
+                                                <div key={stamp.id} className={clsx("aspect-square rounded-xl border-2 flex flex-col items-center justify-center relative transition-all group", isUnlocked ? "border-lumi-sage bg-lumi-sage/5" : "border-slate-100 bg-slate-50 border-dashed")}>
+                                                    {isUnlocked ? (
+                                                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-lumi-sage drop-shadow-sm">
+                                                            <stamp.Icon weight="fill" className="w-10 h-10" />
+                                                        </motion.div>
+                                                    ) : (
+                                                        <stamp.Icon weight="thin" className="w-8 h-8 text-slate-200" />
+                                                    )}
+                                                    <span className={clsx("absolute bottom-2 text-[10px] font-bold uppercase tracking-wider", isUnlocked ? "text-lumi-sage" : "text-slate-300")}>{stamp.label}</span>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
 
                                     {/* BACK FACE of Chapter 1 (Visible when Page=2, on Left) */}
