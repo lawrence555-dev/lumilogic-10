@@ -26,19 +26,28 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
         if (first) onDragChange?.(true);
         if (last) onDragChange?.(false);
 
-        // Perspective Correction
-        const dragZ = 3;
-        const cameraZ = camera.position.z;
-        const scaleFactor = (cameraZ - dragZ) / cameraZ;
+        // Ray-Plane Intersection (for perfect alignment at Z=3)
+        // 1. Convert Screen Pixels to NDC (-1 to +1)
+        const ndcX = (screenX / size.width) * 2 - 1;
+        const ndcY = -(screenY / size.height) * 2 + 1;
 
-        // Map Screen Pixels to World Units (at Z=3 plane)
-        const x = ((screenX / size.width) * viewport.width - viewport.width / 2) * scaleFactor;
-        const y = (-(screenY / size.height) * viewport.height + viewport.height / 2) * scaleFactor;
+        // 2. Cast Ray from Camera
+        const vector = new THREE.Vector3(ndcX, ndcY, 0.5);
+        vector.unproject(camera);
+        const dir = vector.sub(camera.position).normalize();
+
+        // 3. Find Intersection with Plane Z=3
+        const targetZ = 3;
+        const distance = (targetZ - camera.position.z) / dir.z;
+        const pos = camera.position.clone().add(dir.multiplyScalar(distance));
+
+        const x = pos.x;
+        const y = pos.y;
 
         if (active) {
             setHeld(true);
             // Dragging: Move smoothly at Z=3 (Safe foreground)
-            api.position.set(x, y, dragZ);
+            api.position.set(x, y, targetZ);
             api.velocity.set(0, 0, 0);
             api.angularVelocity.set(0, 0, 0);
             api.wakeUp();

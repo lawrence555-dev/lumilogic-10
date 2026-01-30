@@ -23,6 +23,7 @@ export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalance
     // Central beam + 2 Trays (Cups)
     const [beamRef, api] = useCompoundBody(() => ({
         mass: 5, // Heavy enough to be stable
+        rotation: [0, 0, 0.25], // Start tilted (Left Heavy) to match initial state
         position: [0, 0.5, 0], // Top of base
         shapes: [
             // Main Beam
