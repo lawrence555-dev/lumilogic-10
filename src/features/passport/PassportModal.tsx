@@ -26,17 +26,18 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
     useEffect(() => {
         if (isOpen) {
             const saved = JSON.parse(localStorage.getItem("lumilogic_stamps") || '["spatial"]');
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setUnlockedStamps(saved);
         }
     }, [isOpen]);
 
-    const handleNext = (e: React.MouseEvent) => { e.stopPropagation(); setPage(p => Math.min(p + 1, 2)); };
+    // const handleNext = (e: React.MouseEvent) => { e.stopPropagation(); setPage(p => Math.min(p + 1, 2)); };
 
     // Explicit Back Logic to prevent confusion or double-triggering "Close"
-    const handlePrev = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setPage(p => Math.max(0, p - 1));
-    };
+    // const handlePrev = (e: React.MouseEvent) => {
+    //     e.stopPropagation();
+    //     setPage(p => Math.max(0, p - 1));
+    // };
 
     // Reset page on close
     const handleClose = () => { setPage(0); onClose(); };
@@ -139,7 +140,7 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                     <div className="w-32 h-32 bg-slate-200 rounded-full mb-6 border-4 border-lumi-wood overflow-hidden relative">
                                         <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-slate-400">L</div>
                                     </div>
-                                    <h2 className="text-3xl font-bold text-lumi-primary font-baloo">Lumi's Passport</h2>
+                                    <h2 className="text-3xl font-bold text-lumi-primary font-baloo">Lumi&apos;s Passport</h2>
                                     <p className="text-slate-400 mt-2">Level 1 Explorer</p>
 
                                     <div className="mt-8 w-full grid grid-cols-2 gap-4">

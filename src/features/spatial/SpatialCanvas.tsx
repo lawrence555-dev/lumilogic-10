@@ -53,12 +53,11 @@ function GameLogic({
     useEffect(() => {
         // 1. Start at Target (SHOW GOAL)
         // Camera moves to Z axis (Front)
-        // @ts-ignore
         if (controls) {
             // Reset to front view
             camera.position.set(0, 0, 20);
             camera.lookAt(0, 0, 0);
-            // @ts-ignore
+            // @ts-expect-error - R3F controls type is loose
             controls.update();
         }
 
@@ -76,7 +75,7 @@ function GameLogic({
 
             camera.position.set(x, y, z);
             camera.lookAt(0, 0, 0);
-            // @ts-ignore
+            // @ts-expect-error - R3F controls type is loose
             controls?.update();
 
             console.log("Scrambled Camera Position");
@@ -125,7 +124,8 @@ function GameLogic({
         if (angle < WIN_TOLERANCE) {
             setIsSuccess(true);
             // Freeze Controls
-            // @ts-ignore
+            // @ts-expect-error - R3F controls type is loose
+            // eslint-disable-next-line react-hooks/immutability
             if (controls) controls.enabled = false;
             onSuccess();
         }
@@ -167,7 +167,7 @@ function GameLogic({
 
 export default function SpatialCanvas({ onSuccess }: { onSuccess: () => void }) {
     const [showHint, setShowHint] = useState(false);
-    const [lastActivity, setLastActivity] = useState(Date.now());
+    const [lastActivity, setLastActivity] = useState(() => Date.now());
     const [isSuccess, setIsSuccess] = useState(false);
     const [feedback, setFeedback] = useState<'neutral' | 'warm' | 'hot'>('neutral');
 

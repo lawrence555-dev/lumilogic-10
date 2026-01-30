@@ -47,6 +47,8 @@ export function BalanceScale({ onBalanceChange, forceBalance = false }: { onBala
         ],
         linearDamping: 0.5,
         angularDamping: 0.5, // Slow down swinging
+        onCollideBegin: (e: { body: { name: string } }) => { /* collision start handler */ },
+        onCollideEnd: (e: { body: { name: string } }) => { /* collision end handler */ },
     }));
 
     // Track Rotation
@@ -97,7 +99,8 @@ export function BalanceScale({ onBalanceChange, forceBalance = false }: { onBala
     return (
         <group>
             {/* Visual Mesh for Base */}
-            <mesh ref={baseRef as any}>
+
+            <mesh ref={baseRef}>
                 <cylinderGeometry args={[0.5, 0.8, 4, 32]} />
                 <meshStandardMaterial color="#8D6E63" />
             </mesh>
@@ -105,7 +108,8 @@ export function BalanceScale({ onBalanceChange, forceBalance = false }: { onBala
             {/* Visual Mesh for Beam & Trays */}
             {/* Note: This MUST match the physics shapes manually or iterate. 
                 For simplicity in Kid's App, constructing a group that follows the physics body. */}
-            <group ref={beamRef as any}>
+
+            <group ref={beamRef}>
                 {/* Main Beam */}
                 <RoundedBox args={[8, 0.2, 0.5]} radius={0.05} smoothness={4}>
                     <meshPhysicalMaterial

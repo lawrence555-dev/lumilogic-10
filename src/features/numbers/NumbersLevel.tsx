@@ -3,7 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Physics, useBox } from "@react-three/cannon";
 import { Environment, OrbitControls, RoundedBox } from "@react-three/drei";
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { House, IdentificationCard, ArrowsClockwise } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,23 +20,30 @@ export default function NumbersLevel() {
     const [isDragging, setIsDragging] = useState(false);
     const [basketCounts, setBasketCounts] = useState<Set<string>>(new Set());
     const [resetKey, setResetKey] = useState(0);
-    const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     // WIN LOGIC: Count Based (Robust)
     useEffect(() => {
         // If 3 items in Right Basket
         if (basketCounts.size === 3 && !showSuccess) {
-            // Start Timer (Wait for stabilization visual, or just win)
-            const t = setTimeout(() => {
+            // Clear existing if any
+            if (timerRef.current) clearTimeout(timerRef.current);
+
+            // Start Timer
+            timerRef.current = setTimeout(() => {
                 setShowSuccess(true);
             }, 1000);
-            setTimer(t);
         } else {
-            if (basketCounts.size !== 3 && timer) clearTimeout(timer);
+            // Reset if condition lost
+            if (basketCounts.size !== 3 && timerRef.current) {
+                clearTimeout(timerRef.current);
+                timerRef.current = null;
+            }
         }
 
+        // Cleanup on unmount or dependency change
         return () => {
-            if (timer) clearTimeout(timer);
+            if (timerRef.current) clearTimeout(timerRef.current);
         };
     }, [basketCounts, showSuccess]);
 
@@ -164,7 +171,7 @@ function SupplyShelf({ position }: { position: [number, number, number] }) {
     }));
 
     return (
-        <mesh ref={ref as any}>
+        <mesh ref={ref}>
             <RoundedBox args={[8, 0.5, 2]} radius={0.1} smoothness={4}>
                 <meshStandardMaterial color="#8D6E63" transparent opacity={0.8} />
             </RoundedBox>

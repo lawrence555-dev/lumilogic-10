@@ -1,7 +1,7 @@
 "use client";
 
 import { useSphere } from "@react-three/cannon";
-import { useThree, useFrame } from "@react-three/fiber";
+import { useThree } from "@react-three/fiber";
 import { useDrag } from "@use-gesture/react";
 import { useState } from "react";
 import * as THREE from "three";
@@ -14,7 +14,7 @@ export interface PineconeProps {
 }
 
 export function Pinecone({ id, position = [0, 5, 0], onDragChange, onBasketChange }: PineconeProps) {
-    const { size, viewport, camera, pointer } = useThree();
+    const { camera, pointer } = useThree();
 
     // Physics Body
     const [ref, api] = useSphere(() => ({
@@ -82,7 +82,6 @@ export function Pinecone({ id, position = [0, 5, 0], onDragChange, onBasketChang
     });
 
     return (
-        // @ts-ignore
         <mesh
             ref={ref}
             {...bind()}
