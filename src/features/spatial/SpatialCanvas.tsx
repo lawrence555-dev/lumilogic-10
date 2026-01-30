@@ -1,9 +1,10 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { ResponsiveCamera } from "@/features/common/ResponsiveCamera";
 import { OrbitControls, RoundedBox, Text, Center, Environment } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
-import { HandPointing, CheckCircle, Star, Stamp } from "@phosphor-icons/react";
+import { HandPointing, CheckCircle, Star, Stamp, ArrowsClockwise } from "@phosphor-icons/react";
 import { useState, useRef, useEffect } from "react";
 import * as THREE from "three";
 import clsx from "clsx";
@@ -61,7 +62,7 @@ function GameLogic({
             controls.update();
         }
 
-        // 2. Wait 1.5s then Scramble
+        // 2. Wait 0.8s then Scramble
         const scrambleTimer = setTimeout(() => {
             // Move camera to random spherical position
             const radius = 20;
@@ -81,7 +82,7 @@ function GameLogic({
             console.log("Scrambled Camera Position");
             isLockedRef.current = false;
             hasInitializedRef.current = true;
-        }, 1500);
+        }, 800);
 
         return () => clearTimeout(scrambleTimer);
     }, [camera, controls]);
@@ -133,22 +134,20 @@ function GameLogic({
 
     return (
         <>
-            <Center>
-                {/* PREMIUM: Stable Scale 6.0, Centered */}
-                <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[6.0, 6.0, 6.0]}>
-                    <meshPhysicalMaterial
-                        ref={cubeMaterialRef}
-                        color={WOOD_COLOR}
-                        roughness={0.15}       // Smooth, polished
-                        metalness={0.05}       // Slight reflection
-                        clearcoat={1}          // Gloss varnish
-                        clearcoatRoughness={0.1}
-                        emissive={SAGE_COLOR}
-                        emissiveIntensity={0}
-                    />
-                    <StarMarker />
-                </RoundedBox>
-            </Center>
+            {/* PREMIUM: Stable Scale 6.0, Centered at (0,0,0) explicitly */}
+            <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4} scale={[6.0, 6.0, 6.0]}>
+                <meshPhysicalMaterial
+                    ref={cubeMaterialRef}
+                    color={WOOD_COLOR}
+                    roughness={0.15}       // Smooth, polished
+                    metalness={0.05}       // Slight reflection
+                    clearcoat={1}          // Gloss varnish
+                    clearcoatRoughness={0.1}
+                    emissive={SAGE_COLOR}
+                    emissiveIntensity={0}
+                />
+                <StarMarker />
+            </RoundedBox>
 
             {/* PREMIUM: Free Rotation + Damping (Physics feel) */}
             <OrbitControls
@@ -170,6 +169,7 @@ export default function SpatialCanvas({ onSuccess }: { onSuccess: () => void }) 
     const [lastActivity, setLastActivity] = useState(() => Date.now());
     const [isSuccess, setIsSuccess] = useState(false);
     const [feedback, setFeedback] = useState<'neutral' | 'warm' | 'hot'>('neutral');
+    const [resetKey, setResetKey] = useState(0);
 
     // Input Tracker for Idle Hint
     useEffect(() => {
@@ -202,9 +202,34 @@ export default function SpatialCanvas({ onSuccess }: { onSuccess: () => void }) 
     };
 
     return (
-        <div className="w-full h-full relative bg-neutral-100 rounded-3xl overflow-hidden shadow-inner flex items-center justify-center">
+        <div className="w-full h-full relative bg-neutral-100 overflow-hidden flex items-center justify-center">
+
+            {/* Top Bar */}
+            <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10 pointer-events-none">
+                {/* Left Spacer for Back Button */}
+                <div className="w-12" />
+
+                {/* Module Title (Centered) */}
+                <div className="flex flex-col items-center">
+                    <h1 className="text-3xl font-baloo font-bold text-lumi-wood drop-shadow-sm">Spatial Reasoning</h1>
+                    <span className="text-lumi-sage font-medium opacity-80">The Star Match</span>
+                </div>
+
+                {/* Right Actions */}
+                <div className="flex gap-4 pointer-events-auto">
+                    <button
+                        onClick={() => setResetKey(k => k + 1)}
+                        className="p-3 bg-white rounded-full shadow-sm hover:scale-105 transition-transform text-lumi-wood flex items-center justify-center"
+                        title="Restart Level"
+                    >
+                        <ArrowsClockwise weight="duotone" className="w-8 h-8" />
+                    </button>
+                </div>
+            </div>
+
             {/* PREMIUM: Camera Z=20 */}
-            <Canvas camera={{ position: [0, 0, 20], fov: 35 }}>
+            <Canvas key={resetKey} camera={{ position: [0, 0, 20], fov: 35 }}>
+                <ResponsiveCamera defaultZ={20} mobileZ={30} />
                 <ambientLight intensity={0.7} />
                 <spotLight position={[10, 10, 10]} intensity={1.2} angle={0.5} penumbra={1} castShadow />
                 <pointLight position={[-10, -10, -10]} intensity={0.5} color="#A5D6A7" />

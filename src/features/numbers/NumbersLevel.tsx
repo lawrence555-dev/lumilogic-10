@@ -4,11 +4,12 @@ import { Canvas } from "@react-three/fiber";
 import { Physics, useBox } from "@react-three/cannon";
 import { Environment, OrbitControls, RoundedBox } from "@react-three/drei";
 import { Suspense, useState, useEffect, useRef } from "react";
-import { House, IdentificationCard, ArrowsClockwise } from "@phosphor-icons/react";
-import Link from "next/link";
+import { IdentificationCard, ArrowsClockwise } from "@phosphor-icons/react";
+
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 
+import { ResponsiveCamera } from "@/features/common/ResponsiveCamera";
 import { BalanceScale } from "./components/BalanceScale";
 import { Pinecone } from "./components/Pinecone";
 import StampOverlay from "@/features/passport/StampOverlay";
@@ -80,12 +81,16 @@ export default function NumbersLevel() {
             {/* --- UI LAYER --- */}
             {/* Top Bar */}
             <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10 pointer-events-none">
-                {/* Module Title */}
-                <div className="flex flex-col">
+                {/* Left Spacer for Back Button */}
+                <div className="w-12" />
+
+                {/* Module Title (Centered) */}
+                <div className="flex flex-col items-center">
                     <h1 className="text-3xl font-baloo font-bold text-lumi-wood drop-shadow-sm">Number Sense</h1>
                     <span className="text-lumi-sage font-medium opacity-80">The Forest Balance</span>
                 </div>
 
+                {/* Right Actions */}
                 <div className="flex gap-4 pointer-events-auto">
                     <button
                         onClick={() => setResetKey(k => k + 1)}
@@ -94,10 +99,7 @@ export default function NumbersLevel() {
                     >
                         <ArrowsClockwise weight="duotone" className="w-8 h-8" />
                     </button>
-
-                    <Link href="/" className="p-3 bg-white rounded-full shadow-sm hover:scale-105 transition-transform text-lumi-wood">
-                        <House weight="duotone" className="w-8 h-8" />
-                    </Link>
+                    {/* Home Button Removed - handled by GameContainer */}
                 </div>
             </div>
 
@@ -106,6 +108,7 @@ export default function NumbersLevel() {
 
             {/* --- 3D SCENE --- */}
             <Canvas camera={{ position: [0, 0.5, 11], fov: 40 }} shadows>
+                <ResponsiveCamera defaultZ={11} mobileZ={18} />
                 {/* Lighting */}
                 <ambientLight intensity={0.5} />
                 <spotLight position={[10, 10, 10]} angle={0.5} penumbra={1} intensity={1} castShadow />

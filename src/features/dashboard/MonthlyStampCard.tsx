@@ -1,17 +1,18 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMonthlyProgress } from "@/hooks/useMonthlyProgress";
 import StampSlot from "./StampSlot";
 import { Tree, Mountains } from "@phosphor-icons/react";
 
 export default function MonthlyStampCard() {
+    const router = useRouter();
     const { days, markAsComplete } = useMonthlyProgress();
 
     const handleSlotClick = (day: number) => {
-        // Logic to launch game will go here.
-        // For now, we simulate completion just to test the "Stamp" animation.
-        // In reality, this should router.push to the game.
-        console.log(`Starting Quest for Day ${day}`);
+        if (day === 1) router.push('/spatial');
+        if (day === 2) router.push('/numbers');
+        if (day === 3) router.push('/spatial');
     };
 
     return (
@@ -24,7 +25,7 @@ export default function MonthlyStampCard() {
                     </span>
                     <h1 className="text-3xl lg:text-4xl font-bold flex items-center gap-3">
                         <Tree weight="duotone" className="text-emerald-600" />
-                        森林啟蒙
+                        Forest Enlightenment
                     </h1>
                 </div>
                 <div className="text-right hidden sm:block">
