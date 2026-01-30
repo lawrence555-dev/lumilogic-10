@@ -29,20 +29,20 @@ export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalance
             { type: "Box", args: [8, 0.2, 0.5], position: [0, 0, 0] },
 
             // Left Tray (Cup Base)
-            { type: "Box", args: [1.5, 0.2, 1.5], position: [-4, 0.5, 0] },
+            { type: "Box", args: [1.5, 0.2, 1.5], position: [-4, 0.2, 0] },
             // Left Tray Walls (Thicker: 0.2)
-            { type: "Box", args: [0.2, 1, 1.5], position: [-4.7, 1, 0] }, // Outer
-            { type: "Box", args: [0.2, 1, 1.5], position: [-3.3, 1, 0] }, // Inner
-            { type: "Box", args: [1.3, 1, 0.2], position: [-4, 1, 0.7] }, // Front
-            { type: "Box", args: [1.3, 1, 0.2], position: [-4, 1, -0.7] }, // Back
+            { type: "Box", args: [0.2, 1, 1.5], position: [-4.7, 0.7, 0] }, // Outer
+            { type: "Box", args: [0.2, 1, 1.5], position: [-3.3, 0.7, 0] }, // Inner
+            { type: "Box", args: [1.3, 1, 0.2], position: [-4, 0.7, 0.7] }, // Front
+            { type: "Box", args: [1.3, 1, 0.2], position: [-4, 0.7, -0.7] }, // Back
 
             // Right Tray (Cup Base)
-            { type: "Box", args: [1.5, 0.2, 1.5], position: [4, 0.5, 0] },
+            { type: "Box", args: [1.5, 0.2, 1.5], position: [4, 0.2, 0] },
             // Right Tray Walls
-            { type: "Box", args: [0.2, 1, 1.5], position: [4.7, 1, 0] }, // Outer
-            { type: "Box", args: [0.2, 1, 1.5], position: [3.3, 1, 0] }, // Inner
-            { type: "Box", args: [1.3, 1, 0.2], position: [4, 1, 0.7] }, // Front
-            { type: "Box", args: [1.3, 1, 0.2], position: [4, 1, -0.7] }, // Back
+            { type: "Box", args: [0.2, 1, 1.5], position: [4.7, 0.7, 0] }, // Outer
+            { type: "Box", args: [0.2, 1, 1.5], position: [3.3, 0.7, 0] }, // Inner
+            { type: "Box", args: [1.3, 1, 0.2], position: [4, 0.7, 0.7] }, // Front
+            { type: "Box", args: [1.3, 1, 0.2], position: [4, 0.7, -0.7] }, // Back
         ],
         linearDamping: 0.5,
         angularDamping: 0.5, // Slow down swinging
@@ -103,12 +103,12 @@ export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalance
                 </RoundedBox>
 
                 {/* Left Tray Visual */}
-                <group position={[-4, 0.5, 0]}>
+                <group position={[-4, 0.2, 0]}>
                     <TrayVisual color={WOOD_COLOR} />
                 </group>
 
                 {/* Right Tray Visual */}
-                <group position={[4, 0.5, 0]}>
+                <group position={[4, 0.2, 0]}>
                     <TrayVisual color={WOOD_COLOR} />
                 </group>
 
