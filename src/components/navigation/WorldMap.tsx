@@ -1,6 +1,6 @@
 "use client";
 
-import { Cube, Scales, PuzzlePiece, Shapes, GitBranch } from "@phosphor-icons/react";
+import { Cube, Scales, PuzzlePiece, Shapes, GitBranch, Camera } from "@phosphor-icons/react";
 import ModuleIcon from "@/components/navigation/ModuleIcon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,6 +24,10 @@ export default function WorldMap({ onNavigate, completedModules }: WorldMapProps
 
     return (
         <div className="w-full h-full relative overflow-hidden bg-[#FAF9F6]">
+            {/* Global UI: Dad's Camera Toolkit (Top Right) */}
+            <Link href="/tokyo" className="absolute top-6 right-6 z-50 p-3 bg-white/60 hover:bg-white backdrop-blur rounded-full text-slate-400 hover:text-lumi-primary transition-all shadow-sm hover:scale-110 active:scale-95" title="X-M5 Tokyo Settings">
+                <Camera weight="fill" className="w-6 h-6" />
+            </Link>
 
 
             {/* --- BACKGROUND ATMOSPHERE (Mobile Only primarily, but nice everywhere) --- */}
