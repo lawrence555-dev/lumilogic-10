@@ -176,10 +176,6 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                         <h3 className="text-xl font-bold text-lumi-wood flex items-center gap-2">
                                             <Cube weight="fill" /> Chapter 1: The Forest
                                         </h3>
-                                        {/* Next Button -> Goes to Page 2 (Chapter 2) */}
-                                        <button onClick={handleNext} className="p-2 hover:bg-slate-50 rounded-full text-lumi-primary transition-colors cursor-pointer">
-                                            <CaretRight weight="bold" className="w-6 h-6" />
-                                        </button>
                                     </div>
 
                                     <div className="grid grid-cols-4 gap-4">
@@ -246,6 +242,21 @@ export default function PassportModal({ isOpen, onClose }: PassportModalProps) {
                                     title="Previous Page"
                                 >
                                     <CaretLeft weight="bold" className="w-8 h-8" />
+                                </button>
+                            )}
+
+                            {/* Global Next Button (Desktop) */}
+                            {page > 0 && page < 2 && (
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setPage(p => Math.min(2, p + 1));
+                                    }}
+                                    className="absolute -right-16 top-1/2 -translate-y-1/2 p-3 bg-white/80 hover:bg-white rounded-full text-lumi-primary shadow-lg backdrop-blur-sm transition-all z-50 hover:scale-110"
+                                    title="Next Page"
+                                >
+                                    <CaretRight weight="bold" className="w-8 h-8" />
                                 </button>
                             )}
 
