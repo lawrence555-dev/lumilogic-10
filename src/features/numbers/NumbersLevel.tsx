@@ -16,27 +16,36 @@ export default function NumbersLevel() {
     const [isBalanced, setIsBalanced] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [basketCounts, setBasketCounts] = useState<Set<string>>(new Set());
     const [resetKey, setResetKey] = useState(0);
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
-    // WIN LOGIC: 1.5s Hold
+    // WIN LOGIC: Count Based (Robust)
     useEffect(() => {
-        if (isBalanced && !showSuccess) {
-            // Start Timer
+        // If 3 items in Right Basket
+        if (basketCounts.size === 3 && !showSuccess) {
+            // Start Timer (Wait for stabilization visual, or just win)
             const t = setTimeout(() => {
                 setShowSuccess(true);
-                // Play Sound here
-            }, 1500);
+            }, 1000);
             setTimer(t);
         } else {
-            // Cancel Timer if balance lost
-            if (timer) clearTimeout(timer);
+            if (basketCounts.size !== 3 && timer) clearTimeout(timer);
         }
 
         return () => {
             if (timer) clearTimeout(timer);
         };
-    }, [isBalanced, showSuccess]);
+    }, [basketCounts, showSuccess]);
+
+    const handleBasketChange = (id: string, inBasket: boolean) => {
+        setBasketCounts(prev => {
+            const next = new Set(prev);
+            if (inBasket) next.add(id);
+            else next.delete(id);
+            return next;
+        });
+    };
 
     const handleStampComplete = () => {
         // Navigate or Update State
@@ -97,22 +106,22 @@ export default function NumbersLevel() {
 
                         {/* --- PINECONES --- */}
                         {/* 1. Left Tray (Pre-filled x3) - Spawn lower and spread out to avoid bounce out */}
-                        <Pinecone position={[-4.5, 2.5, 0.4]} onDragChange={setIsDragging} />
-                        <Pinecone position={[-3.5, 2.5, 0.4]} onDragChange={setIsDragging} />
-                        <Pinecone position={[-4.0, 2.5, -0.4]} onDragChange={setIsDragging} />
+                        <Pinecone id="l1" position={[-4.5, 2.5, 0.4]} onDragChange={setIsDragging} />
+                        <Pinecone id="l2" position={[-3.5, 2.5, 0.4]} onDragChange={setIsDragging} />
+                        <Pinecone id="l3" position={[-4.0, 2.5, -0.4]} onDragChange={setIsDragging} />
 
                         {/* 2. User Supply (Bottom Area) */}
                         <SupplyShelf position={[0, -2.5, 3]} />
-                        {/* A row of pinecones ready to pick */}
-                        <Pinecone position={[-2.5, -1.8, 3]} onDragChange={setIsDragging} />
-                        <Pinecone position={[-1.5, -1.8, 3]} onDragChange={setIsDragging} />
-                        <Pinecone position={[-0.5, -1.8, 3]} onDragChange={setIsDragging} />
-                        <Pinecone position={[0.5, -1.8, 3]} onDragChange={setIsDragging} />
-                        <Pinecone position={[1.5, -1.8, 3]} onDragChange={setIsDragging} />
-                        <Pinecone position={[2.5, -1.8, 3]} onDragChange={setIsDragging} />
+                        {/* A row of pinecones ready to pick - Add Explicit IDs and Basket Tracking */}
+                        <Pinecone id="s1" position={[-2.5, -1.8, 3]} onDragChange={setIsDragging} onBasketChange={handleBasketChange} />
+                        <Pinecone id="s2" position={[-1.5, -1.8, 3]} onDragChange={setIsDragging} onBasketChange={handleBasketChange} />
+                        <Pinecone id="s3" position={[-0.5, -1.8, 3]} onDragChange={setIsDragging} onBasketChange={handleBasketChange} />
+                        <Pinecone id="s4" position={[0.5, -1.8, 3]} onDragChange={setIsDragging} onBasketChange={handleBasketChange} />
+                        <Pinecone id="s5" position={[1.5, -1.8, 3]} onDragChange={setIsDragging} onBasketChange={handleBasketChange} />
+                        <Pinecone id="s6" position={[2.5, -1.8, 3]} onDragChange={setIsDragging} onBasketChange={handleBasketChange} />
 
                         {/* Extra */}
-                        <Pinecone position={[3, -3, 2]} />
+                        <Pinecone id="extra" position={[3, -3, 2]} />
 
                     </Physics>
                 </Suspense>

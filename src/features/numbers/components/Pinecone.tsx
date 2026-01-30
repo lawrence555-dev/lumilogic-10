@@ -6,8 +6,15 @@ import { useDrag } from "@use-gesture/react";
 import { useState } from "react";
 import * as THREE from "three";
 
-export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [number, number, number], onDragChange?: (dragging: boolean) => void }) {
-    const { size, viewport, camera } = useThree();
+export interface PineconeProps {
+    id: string;
+    position?: [number, number, number];
+    onDragChange?: (dragging: boolean) => void;
+    onBasketChange?: (id: string, inBasket: boolean) => void;
+}
+
+export function Pinecone({ id, position = [0, 5, 0], onDragChange, onBasketChange }: PineconeProps) {
+    const { size, viewport, camera, pointer } = useThree();
 
     // Physics Body
     const [ref, api] = useSphere(() => ({
@@ -21,22 +28,18 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
     const [isHeld, setHeld] = useState(false);
 
     // Binding Drag - Absolute Mapping for reliability
-    const bind = useDrag(({ xy: [screenX, screenY], active, last, first }) => {
+    const bind = useDrag(({ active, last, first }) => {
         // Notify Parent
         if (first) onDragChange?.(true);
         if (last) onDragChange?.(false);
 
-        // Ray-Plane Intersection (for perfect alignment at Z=3)
-        // 1. Convert Screen Pixels to NDC (-1 to +1)
-        const ndcX = (screenX / size.width) * 2 - 1;
-        const ndcY = -(screenY / size.height) * 2 + 1;
+        // Ray-Plane Intersection using R3F Pointer (Normalized -1 to 1)
+        // This handles all canvas resizing/offsets automatically
+        const vec = new THREE.Vector3(pointer.x, pointer.y, 0.5);
+        vec.unproject(camera);
+        const dir = vec.sub(camera.position).normalize();
 
-        // 2. Cast Ray from Camera
-        const vector = new THREE.Vector3(ndcX, ndcY, 0.5);
-        vector.unproject(camera);
-        const dir = vector.sub(camera.position).normalize();
-
-        // 3. Find Intersection with Plane Z=3
+        // Find Intersection with Plane Z=3
         const targetZ = 3;
         const distance = (targetZ - camera.position.z) / dir.z;
         const pos = camera.position.clone().add(dir.multiplyScalar(distance));
@@ -66,8 +69,15 @@ export function Pinecone({ position = [0, 5, 0], onDragChange }: { position?: [n
             api.angularVelocity.set(0, 0, 0);
             api.wakeUp(); // Let gravity take over
 
-            if (last) onDragChange?.(false);
-            if (last) setHeld(false);
+            if (last) {
+                // Update Basket Status
+                // Right Basket is at X=4
+                const isRightBasket = finalX === 4;
+                onBasketChange?.(id, isRightBasket);
+
+                onDragChange?.(false);
+                setHeld(false);
+            }
         }
     });
 
