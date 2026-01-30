@@ -64,7 +64,7 @@ export function BalanceScale({ onBalanceChange }: { onBalanceChange?: (isBalance
     useFrame(() => {
         // Z-axis rotation (Tilt)
         const tilt = rotation.current[2];
-        const balanced = Math.abs(tilt) < 0.05; // ~3 degrees tolerance
+        const balanced = Math.abs(tilt) < 0.2; // Relaxed tolerance (~11 deg) for better UX
 
         if (balanced !== isLevel) {
             setIsLevel(balanced);
